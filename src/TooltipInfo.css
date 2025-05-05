@@ -1,0 +1,33 @@
+.tooltip-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-left: 0.5rem;
+}
+
+.tooltip-button {
+  background-color: #8f959c;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 1.2rem;
+  height: 1.2rem;
+  font-size: 0.75rem;
+  text-align: center;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1.2rem;
+}
+
+.tooltip-popup {
+  position: absolute;
+  top: 130%;
+  left: 0;
+  z-index: 10;
+  background-color: #333;
+  color: white;
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  width: 250px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}

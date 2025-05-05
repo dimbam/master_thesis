@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  neo4j-db1:
+    image: neo4j:5.17-community
+    container_name: neo4j-db1
+    ports:
+      - '7474:7474' # HTTP
+      - '7687:7687' # Bolt
+    environment:
+      - NEO4J_AUTH=neo4j/testpass1
+    volumes:
+      - neo4j-db1-data:/data
+
+  neo4j-db2:
+    image: neo4j:5.17-community
+    container_name: neo4j-db2
+    ports:
+      - '7475:7474'
+      - '7688:7687'
+    environment:
+      - NEO4J_AUTH=neo4j/testpass2
+    volumes:
+      - neo4j-db2-data:/data
+
+  neo4j-db3:
+    image: neo4j:5.17-community
+    container_name: neo4j-db3
+    ports:
+      - '7476:7474'
+      - '7689:7687'
+    environment:
+      - NEO4J_AUTH=neo4j/testpass3
+    volumes:
+      - neo4j-db3-data:/data
+
+volumes:
+  neo4j-db1-data:
+  neo4j-db2-data:
+  neo4j-db3-data:

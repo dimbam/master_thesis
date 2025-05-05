@@ -1,0 +1,309 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #ffffff;
+}
+
+.App {
+  display: flex; /* Use flexbox to split the screen */
+  min-height: 100vh;
+}
+
+.left-section {
+  flex: 1;
+  position: relative;
+  padding: 2rem;
+  /* color: #000000; */
+  min-height: 100vh;
+  background-color: rgb(255, 255, 255); /* White background for text container */
+  overflow: hidden; /* Prevent any overflow of content */
+}
+
+.right-section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem;
+  background-color: #ffffff;
+}
+
+.logo-background {
+  width: 60%;
+  height: 20%;
+  /* object-fit: cover; Ensure the background image stretches to fill the container */
+  opacity: 0.3; /* Darker background */
+  z-index: -1; /* Keep the image in the background */
+  pointer-events: none;
+  user-select: none;
+}
+
+.site-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  max-width: 700px;
+  line-height: 1.6;
+  color: black;
+}
+
+.top-right-buttons {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 2; /* Make sure buttons stay on top */
+}
+
+.top-right-buttons button {
+  padding: 0.5em 1em;
+  font-size: 1.4em;
+  cursor: pointer;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+.top-right-buttons button:hover {
+  background-color: #444;
+}
+
+.welcome-title {
+  color: black;
+  position: relative;
+  margin-left: -4rem;
+}
+
+.white_backgr_text {
+  color: black;
+  background-color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.luce_ref {
+  color: rgb(0, 4, 255);
+  background-color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.login-link {
+  color: #0066cc;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.login-link:hover {
+  text-decoration: underline;
+}
+
+.input-field {
+  padding: 0.8rem;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.submit-btn {
+  padding: 0.8rem;
+  font-size: 1rem;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.submit-btn:hover {
+  background-color: #444;
+}
+
+.back-button button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #ffffff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.back-button button:hover {
+  background-color: #ffffff;
+}
+
+/* Register page starts here */
+
+.register-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: left;
+  background-color: rgb(241, 241, 241);
+  padding: 3rem;
+  border-radius: 8px;
+  box-shadow: none;
+  width: 100%;
+  max-width: 400px;
+}
+
+.reg_log-title {
+  color: #000000;
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  /* margin-left: -4rem; */
+}
+
+.already_user {
+  color: black;
+  background-color: rgb(241, 241, 241);
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.reg_log_buttons {
+  margin-bottom: 1rem;
+}
+
+.reg_log_buttons:hover {
+  background-color: #444;
+}
+
+.register_back-button {
+  flex-direction: column;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+/* Login page starts here */
+
+.login_page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: left;
+  background-color: rgb(241, 241, 241);
+  padding: 3rem;
+  border-radius: 8px;
+  box-shadow: none;
+  width: 100%;
+  max-width: 400px;
+}
+
+.enter_mail {
+  color: #000000;
+  font-size: 1.15rem;
+  margin-bottom: 1rem;
+}
+
+.placeholder_email {
+  padding: 0.4rem;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  border: 1.4px solid black;
+  border-radius: 1.5px;
+  outline: none;
+  margin-top: 1rem;
+}
+
+.register_user {
+  color: black;
+  background-color: rgb(241, 241, 241);
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.login_back-button {
+  flex-direction: column;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Register_waitpoage */
+
+.register_waitpage {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(207, 202, 202);
+  padding: 3rem;
+  border-radius: 8px;
+  box-shadow: none;
+  width: 100%;
+  max-width: 800px;
+}
+
+.registration_mes {
+  color: #000000;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  /* margin-left: -4rem; */
+}
+
+/* Main Dashboard starts here */
+
+.dashboard-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: white;
+  padding: 2rem;
+  width: 100%;
+  min-height: 100vh;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.dashboard-title {
+  font-size: 3.5rem;
+  color: #000;
+  margin-bottom: 3rem; /* space between title and buttons */
+  margin-top: 1rem; /* spacing from the top of the page */
+  text-align: center;
+}
+
+.dashboard-main-buttons-container {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap; /* optional: wraps buttons on small screens */
+}
+
+.dashboard-main-button {
+  padding: 1rem 2rem;
+  font-size: 1.5rem;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 8px; /* Rounded corners for buttons */
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Smooth transition effect on hover */
+  text-align: center;
+}
+
+.dashboard-main-button:hover {
+  background-color: #444; /* Darker background on hover */
+}

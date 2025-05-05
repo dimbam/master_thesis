@@ -1,0 +1,41 @@
+.create-dataset-page {
+  font-family: sans-serif;
+  color: black;
+  overflow-x: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+.form {
+  height: 100vh;
+  width: 100vw;
+  background: rgb(215, 212, 212);
+  padding: 24px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.title-container {
+  border: 2px solid #333;
+  padding: 8px 16px;
+  display: inline-block;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  background-color: rgba(215, 212, 212, 0.1);
+}
+
+.button_col {
+  color: black;
+  background-color: rgb(162, 162, 154);
+}
+
+.back-button {
+  margin-top: 1rem;
+  margin-left: 5rem;
+  border-radius: 6px; /* use this to make edges of the button round*/
+  padding: 0.5rem 1rem;
+  position: right;
+  color: black;
+  background-color: rgb(162, 162, 154);
+  cursor: pointer;
+}

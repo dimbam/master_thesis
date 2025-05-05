@@ -1,0 +1,170 @@
+/* DatasetDashboard.css */
+
+body.dataset-dashboard-body #root {
+  display: block !important;
+  height: auto !important;
+  width: 100% !important;
+}
+
+.dataset-dashboard-page {
+  display: block;
+  min-height: 100vh;
+  background-color: white;
+  font-family: Arial, sans-serif;
+  font-size: 1.3rem;
+  margin-top: 5rem; /* add this */
+  padding-bottom: 2rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.dataset-dashboard-title {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 1.5rem 2rem;
+  background-color: white;
+  z-index: 1000;
+  font-size: 2rem;
+  color: #000;
+  border-bottom: 1px solid #ccc;
+  height: 4.5rem;
+  box-sizing: border-box;
+}
+
+.dataset-dashboard-title-spacer {
+  height: 5rem;
+}
+
+.dataset-dashboard-upload-btn {
+  padding: 0.8rem 1.5rem;
+  font-size: 1.3rem;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 2rem;
+  margin-right: 2rem;
+  margin-top: 10rem;
+}
+
+.dataset-dashboard-upload-btn:hover {
+  background-color: #585858;
+}
+
+.dataset-dashboard-upload-form {
+  background-color: #f0f0f0;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 600px;
+  max-width: 90%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  align-items: flex-start;
+  margin-top: 10rem;
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.dataset-dashboard-upload-form label {
+  width: 100%;
+  font-weight: bold;
+  color: #222;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.dataset-dashboard-form-title {
+  font-weight: bold;
+  font-size: 1.3rem;
+  text-align: left;
+  color: #222;
+}
+
+.dataset-dashboard-upload-form input[type='text'],
+.dataset-dashboard-upload-form textarea,
+.dataset-dashboard-upload-form input[type='file'] {
+  width: 100%;
+  padding: 0.8rem;
+  font-size: 1.3rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.dataset-dashboard-upload-form input[type='radio'],
+.dataset-dashboard-upload-form input[type='checkbox'] {
+  appearance: none; /* Remove browser default styles */
+  background-color: white; /* Set white background */
+  border: 1px solid #aaa;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%; /* Use square for checkbox, or remove this line */
+  cursor: pointer;
+  position: relative;
+}
+
+.dataset-dashboard-upload-form input[type='checkbox'] {
+  border-radius: 3px; /* square box */
+}
+
+.dataset-dashboard-upload-form input[type='radio']:checked::before,
+.dataset-dashboard-upload-form input[type='checkbox']:checked::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #007bff;
+}
+
+.dataset-dashboard-upload-form input[type='checkbox']:checked::before {
+  border-radius: 2px;
+}
+
+.dataset-dashboard-submit-blue {
+  padding: 0.7rem 1.5rem;
+  font-size: 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.dataset-dashboard-submit-blue:hover {
+  background-color: #0056b3;
+}
+
+.back-button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  color: #736f6f;
+ 
+  cursor: pointer;
+}
+
+.dataset-dashboard-upload-form fieldset {
+  border: 1px solid #ccc;
+  color: #000;
+  font-weight: bold;
+  font-size: 1.3rem;
+  border-radius: 5px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.dataset-dashboard-upload-form legend {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.dataset-dashboard-upload-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
