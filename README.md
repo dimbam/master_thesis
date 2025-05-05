@@ -1,54 +1,40 @@
-# React + TypeScript + Vite
+# This is my master thesis repository
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+To start with first open a docker desktop app and run the docker-compose.yaml file that can be found in this folder.
 
-Currently, two official plugins are available:
+To run it, open a git bash and run: sudo docker compose up -d
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+If you are running this on windows, you can modify the start-all.bat file with your paths and simply run this file.
+This will initialize all the neo4j instances and the services that run with them, as well as the nodes and the server for the main form and dashboard.
 
-## Expanding the ESLint configuration
+Otherwise, to start them manually, from the project's main folder(modify the paths with your path):
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+To start the form:
+cd C:\Users\bamdi\Documents\Projects\thesis_blockchain\blockchain-app
+npm run dev
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+To start the server.js:
+cd C:\Users\bamdi\Documents\Projects\thesis_blockchain\blockchain-app\server
+node server.js
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+To start the docker images:
+first open docker desktop app
+Then from the git bash:
+cd /C/Users/bamdi/Documents/Projects/thesis_blockchain/blockchain-app/
+docker compose up -d
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+To start db1-service:
+cd C:\Users\bamdi\Documents\Projects\thesis_blockchain\blockchain-app\services\db1-service
+node .\index.js
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+To start db2-service:
+cd C:\Users\bamdi\Documents\Projects\thesis_blockchain\blockchain-app\services\db2-service
+node .\index.js
+
+To start db3-service:
+cd C:\Users\bamdi\Documents\Projects\thesis_blockchain\blockchain-app\services\db3-service
+node .\index.js
+
+To start the gateway service:
+cd C:\Users\bamdi\Documents\Projects\thesis_blockchain\blockchain-app\gateway
+node .\gateway.js
