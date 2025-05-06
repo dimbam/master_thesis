@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { DUO_METADATA } from './DUO_METADATA';
 import '../.././CreateDataset.css';
 import { getEmailsViaGateway } from './../ReturnEmails';
-import { white } from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
 import TooltipInfo from './../TooltipInfo';
 import { useNavigate } from 'react-router-dom';
 
@@ -28,7 +27,6 @@ export default function CreateDataset() {
   const [emails, setEmails] = useState<string[]>([]);
   const [selectedEmails, setSelectedEmails] = useState<string[]>([]);
   const [selectedValue43, setSelectedValue43] = useState<string[]>([]);
-  const [selectedValue43proof, setSelectedValue43proof] = useState('');
   const [selectedValue43review, setSelectedValue43review] = useState('');
   const [selectedValue43conditionstext, setSelectedValue43conditionstext] = useState('');
   const [selectedValue20investigatorName, setSelectedValue20investigatorName] = useState('');
@@ -40,10 +38,10 @@ export default function CreateDataset() {
   const [selectedValue21contact, setSelectedValue21contact] = useState('');
   const [confirmedExclusion, setConfirmedExclusion] = useState(false);
   const [selectedValue15methodPurpose, setSelectedValue15methodPurpose] = useState<string[]>([]);
-  const [selectedValue15toolType, setSelectedValue15toolType] = useState<string[]>([]);
   const [selectedValue27requirement, setSelectedValue27requirement] = useState(false);
   const [selectedValue27fair, setSelectedValue27fair] = useState(false);
   const [selectedValue43text, setSelectedValue43text] = useState('');
+  const [clinicalCareDeclaration, setclinicalCareDeclaration] = useState(false);
 
   const fetchDiseases = async () => {
     if (!diseaseSearch.trim()) {
@@ -274,26 +272,6 @@ export default function CreateDataset() {
             ))}
           </div>
         )}
-
-        {/* {isSelected && code === 'DUO:0000015' && (
-          <div style={{ marginTop: 12, marginLeft: 48 }}>
-            <strong>Tool Type: </strong>
-            {['AI/ML', 'Statistical', 'Image Processing', 'Bioinformatics'].map((option) => (
-              <label key={option} style={{ display: 'block' }}>
-                <input
-                  type="checkbox"
-                  checked={selectedValue15toolType.includes(option)}
-                  onChange={() => {
-                    setSelectedValue15toolType((prev) =>
-                      prev.includes(option) ? prev.filter((o) => o !== option) : [...prev, option],
-                    );
-                  }}
-                />
-                <span style={{ marginLeft: 8 }}>{option}</span>
-              </label>
-            ))}
-          </div>
-        )} */}
 
         {isSelected && code === 'DUO:0000019' && (
           <div style={{ marginTop: 12, marginLeft: 24 }}>
@@ -668,19 +646,83 @@ export default function CreateDataset() {
           </div>
         )}
 
-        {/* {isSelected && code === 'DUO:0000043' && (
-          <div style={{ marginTop: 6, marginLeft: 48 }}>
-            {'Proof Submission Method'}
-            <select
-              value={selectedValue43proof}
-              onChange={(e) => setSelectedValue43proof(e.target.value)}
-              style={{ padding: 8, fontSize: 16, width: '200px' }}
-            >
-              <option value="Document Upload">Document Upload</option>
-              <option value="Institutional Email">Institutional Email</option>
-            </select>
+        {isSelected && code === 'DUO:0000043' && (
+          <div style={{ marginTop: 12, marginLeft: 48 }}>
+            <label>
+              <input
+                type="checkbox"
+                checked={clinicalCareDeclaration}
+                onChange={() => setclinicalCareDeclaration((prev) => !prev)}
+              />
+              <strong>
+                <span style={{ marginLeft: 10 }}>
+                  Clinical Care Use Declaration (Including Home-Based Care)
+                </span>
+              </strong>
+            </label>
+            {clinicalCareDeclaration && (
+              <div className="clinical_care_form" style={{ marginTop: 12, marginLeft: 48 }}>
+                <strong>By selecting Clinical Care Use, the requester affirms that:</strong>
+
+                <h3 style={{ marginTop: 16, fontWeight: 'bold', fontSize: '1rem' }}>
+                  The data will be used solely for the purpose of clinical care and decision-making.
+                </h3>
+                <h3 style={{ marginTop: 16 }}>
+                  <strong>1. Permitted Settings</strong>
+                </h3>
+                <p style={{ marginLeft: 10 }}>
+                  Clinical care is defined to include, but is not limited to:
+                  <ul style={{ marginLeft: 10 }}>
+                    <li>- In-hospital care</li>
+                    <li>- Outpatient clinic visits</li>
+                    <li>- Licensed home-based care</li>
+                    <li>- Telemedicine consultations</li>
+                  </ul>
+                </p>
+
+                <h3>
+                  <strong>2. Care at Home (or Remote)</strong>
+                </h3>
+                <p style={{ marginLeft: 10 }}>
+                  If clinical care is provided at the patient’s home or through remote platforms:
+                  <ul style={{ marginLeft: 10 }}>
+                    <li>- The requester must be licensed and authorized to deliver such care;</li>
+                    <li>
+                      - The data must be used only for supporting care of an identifiable patient or
+                      case;
+                    </li>
+                    <li>
+                      - The requester must provide a brief description of the care setting and
+                      clinical context.
+                    </li>
+                  </ul>
+                </p>
+
+                <h3 style={{ marginTop: 16 }}>
+                  <strong>I, hereby certify that:</strong>
+                </h3>
+                <p>
+                  <ul style={{ marginLeft: 10 }}>
+                    <li>
+                      - I am a licensed healthcare provider or authorized clinical staff member;
+                    </li>
+                    <li>
+                      - The data requested will be used exclusively for a clinical care episode;
+                    </li>
+                    <li>
+                      - If the care is provided at home or remotely, I am authorized to deliver such
+                      care under applicable law;
+                    </li>
+                    <li>
+                      - I will not use the data for research, teaching, commercial, or model
+                      training purposes.
+                    </li>
+                  </ul>
+                </p>
+              </div>
+            )}
           </div>
-        )} */}
+        )}
 
         {isSelected && code === 'DUO:0000043' && (
           <div style={{ marginTop: 6, marginLeft: 48 }}>

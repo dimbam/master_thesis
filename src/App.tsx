@@ -9,6 +9,7 @@ import MainDashboard from './pages/Main_Dashboard';
 import DatasetDashboard from './pages/Dataset_Dashboard';
 import ModelcardDashboard from './pages/ModelcardDashboard';
 import CreateDataset from './pages/duo-blockchain/CreateDataset';
+import Requesterform from './pages/duo-blockchain/Requester_form';
 import Store from './pages/Store_string';
 import logo from '.././luce.png';
 
@@ -71,6 +72,7 @@ function App() {
         <Route path="/datasetdashboard" element={<DatasetDashboard />} />
         <Route path="/modelcarddashboard" element={<ModelcardDashboard />} />
         <Route path="/createDataset" element={<CreateDataset />} />
+        <Route path="/requesterform" element={<Requesterform />} />
         <Route path="/store" element={<Store />} />
       </Routes>
     </BrowserRouter>

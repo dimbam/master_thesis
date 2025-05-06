@@ -80,3 +80,16 @@
 .dashboard-dropdown:hover .dropdown-content {
   display: block;
 }
+
+.clinical_care_form {
+  background-color: #c2bcbc;
+  border-radius: 8px; /* Keep rounded corners */
+  padding: 0.5rem 1rem;
+  border: 2px solid #000000; /* Add solid black border */
+  width: 55%;
+  box-sizing: border-box;
+}
+
+.clinical_care_form_text {
+  font-size: 1rem;
+}
