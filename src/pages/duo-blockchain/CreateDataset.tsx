@@ -43,6 +43,7 @@ export default function CreateDataset() {
   const [selectedValue15toolType, setSelectedValue15toolType] = useState<string[]>([]);
   const [selectedValue27requirement, setSelectedValue27requirement] = useState(false);
   const [selectedValue27fair, setSelectedValue27fair] = useState(false);
+  const [selectedValue43text, setSelectedValue43text] = useState('');
 
   const fetchDiseases = async () => {
     if (!diseaseSearch.trim()) {
@@ -274,7 +275,7 @@ export default function CreateDataset() {
           </div>
         )}
 
-        {isSelected && code === 'DUO:0000015' && (
+        {/* {isSelected && code === 'DUO:0000015' && (
           <div style={{ marginTop: 12, marginLeft: 48 }}>
             <strong>Tool Type: </strong>
             {['AI/ML', 'Statistical', 'Image Processing', 'Bioinformatics'].map((option) => (
@@ -292,7 +293,7 @@ export default function CreateDataset() {
               </label>
             ))}
           </div>
-        )}
+        )} */}
 
         {isSelected && code === 'DUO:0000019' && (
           <div style={{ marginTop: 12, marginLeft: 24 }}>
@@ -628,31 +629,13 @@ export default function CreateDataset() {
         {isSelected && code === 'DUO:0000043' && (
           <div style={{ marginTop: 12, marginLeft: 48 }}>
             <strong>Allow Access To: </strong>
-            {['Physician ', 'Nurse Practitioner', 'Radiologist', 'Healthcare Institution'].map(
-              (option) => (
-                <label key={option} style={{ display: 'block' }}>
-                  <input
-                    type="checkbox"
-                    checked={selectedValue43.includes(option)}
-                    onChange={() => {
-                      setSelectedValue43((prev) =>
-                        prev.includes(option)
-                          ? prev.filter((o) => o !== option)
-                          : [...prev, option],
-                      );
-                    }}
-                  />
-                  <span style={{ marginLeft: 8 }}>{option}</span>
-                </label>
-              ),
-            )}
-          </div>
-        )}
-
-        {isSelected && code === 'DUO:0000043' && (
-          <div style={{ marginTop: 6, marginLeft: 48 }}>
-            <strong>Required Credential Type</strong>
-            {['Medical License', 'Verifiable Credential', 'Hospital Staff ID'].map((option) => (
+            {[
+              'Physician ',
+              'Nurse Practitioner',
+              'Radiologist',
+              'Healthcare Institution',
+              'Other',
+            ].map((option) => (
               <label key={option} style={{ display: 'block' }}>
                 <input
                   type="checkbox"
@@ -666,10 +649,26 @@ export default function CreateDataset() {
                 <span style={{ marginLeft: 8 }}>{option}</span>
               </label>
             ))}
+            {selectedValue43.includes('Other') && (
+              <input
+                type="text"
+                placeholder="Please specify"
+                value={selectedValue43text}
+                onChange={(e) => setSelectedValue43text(e.target.value)}
+                style={{
+                  marginTop: 8,
+                  padding: 6,
+                  fontSize: 14,
+                  width: '100%',
+                  maxWidth: 400,
+                  boxSizing: 'border-box',
+                }}
+              />
+            )}
           </div>
         )}
 
-        {isSelected && code === 'DUO:0000043' && (
+        {/* {isSelected && code === 'DUO:0000043' && (
           <div style={{ marginTop: 6, marginLeft: 48 }}>
             {'Proof Submission Method'}
             <select
@@ -681,7 +680,7 @@ export default function CreateDataset() {
               <option value="Institutional Email">Institutional Email</option>
             </select>
           </div>
-        )}
+        )} */}
 
         {isSelected && code === 'DUO:0000043' && (
           <div style={{ marginTop: 6, marginLeft: 48 }}>
