@@ -19,7 +19,7 @@ const MainDashboard: React.FC = () => {
           <span className="dashboard-main-button">Dataset</span>
           <div className="dropdown-content">
             <div onClick={() => navigate('/createDataset')}>Create Dataset</div>
-            <div onClick={() => navigate('/viewdataset')}>View Dataset</div>
+            <div onClick={() => navigate('/requesterform')}>View Dataset</div>
           </div>
         </div>
 
@@ -27,7 +27,7 @@ const MainDashboard: React.FC = () => {
           <span className="dashboard-main-button">Model Card</span>
           <div className="dropdown-content">
             <div onClick={() => navigate('/createDataset')}>Create Dataset</div>
-            <div onClick={() => navigate('/viewdataset')}>View Dataset</div>
+            <div onClick={() => navigate('/requesterform')}>View Dataset</div>
           </div>
         </div>
       </div>

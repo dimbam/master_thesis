@@ -112,53 +112,11 @@ export default function Requesterform() {
               <input type="checkbox" checked={!!isSelected} onChange={() => toggleSelect(code)} />
             )}
             <span style={{ marginLeft: 8 }}>
-              {meta.label} ({code})
+              {code == 'DUO:0000043' ? 'Intended Use' : meta.label} ({code})
               <TooltipInfo text={meta.definition} />
             </span>
           </label>
         </div>
-
-        {isSelected && code === 'DUO:0000043' && (
-          <div style={{ marginTop: 12, marginLeft: 48 }}>
-            <strong>Allow Access To: </strong>
-            {[
-              'Physician ',
-              'Nurse Practitioner',
-              'Radiologist',
-              'Healthcare Institution',
-              'Other',
-            ].map((option) => (
-              <label key={option} style={{ display: 'block' }}>
-                <input
-                  type="checkbox"
-                  checked={selectedValue43.includes(option)}
-                  onChange={() => {
-                    setSelectedValue43((prev) =>
-                      prev.includes(option) ? prev.filter((o) => o !== option) : [...prev, option],
-                    );
-                  }}
-                />
-                <span style={{ marginLeft: 8 }}>{option}</span>
-              </label>
-            ))}
-            {selectedValue43.includes('Other') && (
-              <input
-                type="text"
-                placeholder="Please specify"
-                value={selectedValue43text}
-                onChange={(e) => setSelectedValue43text(e.target.value)}
-                style={{
-                  marginTop: 8,
-                  padding: 6,
-                  fontSize: 14,
-                  width: '100%',
-                  maxWidth: 400,
-                  boxSizing: 'border-box',
-                }}
-              />
-            )}
-          </div>
-        )}
 
         {isSelected && code === 'DUO:0000043' && (
           <div style={{ marginTop: 12, marginLeft: 48 }}>
