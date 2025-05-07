@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { DUO_METADATA } from './DUO_METADATA';
 import '../.././CreateDataset.css';
 import { getEmailsViaGateway } from './../ReturnEmails';
-import { white } from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
 import TooltipInfo from './../TooltipInfo';
 import { useNavigate } from 'react-router-dom';
 
@@ -73,21 +72,39 @@ export default function Requesterform() {
   const childrenOf = (rootCode: string) =>
     Object.entries(DUO_METADATA).filter(([, meta]) => meta.subclassOf === rootCode);
 
-  const save = () => {
-    const codes = Object.entries(selected)
-      .filter(([, v]) => v)
-      .map(([k]) => k);
+  // const save = () => {
+  //   const codes = Object.entries(selected)
+  //     .filter(([, v]) => v)
+  //     .map(([k]) => k);
 
-    const stored = localStorage.getItem('datasets');
-    const arr = stored ? JSON.parse(stored) : [];
-    arr.unshift({
+  //   const stored = localStorage.getItem('datasets');
+  //   const arr = stored ? JSON.parse(stored) : [];
+  //   arr.unshift({
+  //     name,
+  //     duoCodes: codes,
+  //     metadata: selected['DUO:0000007'] ? { diseases: selectedDiseases.map((d) => d.id) } : {},
+  //     created: new Date().toISOString(),
+  //   });
+  //   localStorage.setItem('datasets', JSON.stringify(arr));
+  //   alert('Dataset saved!');
+  // };
+
+  const saveJson = () => {
+    const formData = {
       name,
-      duoCodes: codes,
-      metadata: selected['DUO:0000007'] ? { diseases: selectedDiseases.map((d) => d.id) } : {},
-      created: new Date().toISOString(),
-    });
-    localStorage.setItem('datasets', JSON.stringify(arr));
-    alert('Dataset saved!');
+      selected,
+      selectedValue43,
+      selectedValue43text,
+      clinicalCareDeclaration,
+    };
+
+    const jsonBlob = new Blob([JSON.stringify(formData, null, 2)], { type: 'application/json' });
+
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(jsonBlob);
+    link.download = 'form_data.json';
+
+    link.click();
   };
 
   const renderNode = (code: string) => {
@@ -223,7 +240,7 @@ export default function Requesterform() {
 
         <button
           className="button_col"
-          onClick={save}
+          onClick={saveJson}
           disabled={
             !name ||
             Object.values(selected).every((v) => !v) ||
@@ -231,7 +248,7 @@ export default function Requesterform() {
           }
           style={{ marginTop: 24, padding: 12, fontSize: 16 }}
         >
-          Create Dataset
+          Download Form
         </button>
         <span onClick={() => navigate('/')} className="back-button">
           Logout
