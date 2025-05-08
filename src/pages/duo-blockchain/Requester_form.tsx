@@ -99,12 +99,16 @@ export default function Requesterform() {
     };
 
     const jsonBlob = new Blob([JSON.stringify(formData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(jsonBlob);
 
     const link = document.createElement('a');
-    link.href = URL.createObjectURL(jsonBlob);
+    link.href = url;
     link.download = 'form_data.json';
 
+    document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url); // Free memory
   };
 
   const renderNode = (code: string) => {
@@ -126,7 +130,12 @@ export default function Requesterform() {
           )}
           <label style={{ display: 'flex', alignItems: 'center' }}>
             {children.length === 0 && (
-              <input type="checkbox" checked={!!isSelected} onChange={() => toggleSelect(code)} />
+              <input
+                type="checkbox"
+                checked={!!isSelected}
+                onChange={() => toggleSelect(code)}
+                disabled={selected['DUO:0000004'] && code !== 'DUO:0000004'}
+              />
             )}
             <span style={{ marginLeft: 8 }}>
               {code == 'DUO:0000043' ? 'Intended Use' : meta.label} ({code})
@@ -134,6 +143,48 @@ export default function Requesterform() {
             </span>
           </label>
         </div>
+
+        {isSelected && code === 'DUO:0000043' && (
+          <div style={{ marginTop: 12, marginLeft: 48 }}>
+            <strong>Profession: </strong>
+            {[
+              'Physician ',
+              'Nurse Practitioner',
+              'Radiologist',
+              'Healthcare Institution',
+              'Other',
+            ].map((option) => (
+              <label key={option} style={{ display: 'block' }}>
+                <input
+                  type="checkbox"
+                  checked={selectedValue43.includes(option)}
+                  onChange={() => {
+                    setSelectedValue43((prev) =>
+                      prev.includes(option) ? prev.filter((o) => o !== option) : [...prev, option],
+                    );
+                  }}
+                />
+                <span style={{ marginLeft: 8 }}>{option}</span>
+              </label>
+            ))}
+            {selectedValue43.includes('Other') && (
+              <input
+                type="text"
+                placeholder="Please specify"
+                value={selectedValue43text}
+                onChange={(e) => setSelectedValue43text(e.target.value)}
+                style={{
+                  marginTop: 8,
+                  padding: 6,
+                  fontSize: 14,
+                  width: '100%',
+                  maxWidth: 400,
+                  boxSizing: 'border-box',
+                }}
+              />
+            )}
+          </div>
+        )}
 
         {isSelected && code === 'DUO:0000043' && (
           <div style={{ marginTop: 12, marginLeft: 48 }}>
@@ -238,21 +289,16 @@ export default function Requesterform() {
         <h3>Select DUO Permissions</h3>
         <div>{['DUO:0000001', 'DUO:0000017'].map((root) => renderNode(root))}</div>
 
-        <button
-          className="button_col"
-          onClick={saveJson}
-          disabled={
-            !name ||
-            Object.values(selected).every((v) => !v) ||
-            (selected['DUO:0000007'] && selectedDiseases.length === 0)
-          }
-          style={{ marginTop: 24, padding: 12, fontSize: 16 }}
-        >
+        <button className="button_col" onClick={saveJson}>
           Download Form
         </button>
-        <span onClick={() => navigate('/')} className="back-button">
+        <button onClick={() => navigate('/')} className="back-button">
           Logout
-        </span>
+        </button>
+
+        <button onClick={() => navigate('/maindashboard')} className="back-button">
+          Back
+        </button>
       </div>
     </div>
   );

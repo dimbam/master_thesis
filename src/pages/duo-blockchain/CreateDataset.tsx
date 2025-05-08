@@ -24,11 +24,9 @@ export default function CreateDataset() {
   const [selectedValue22, setSelectedValue22] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [emails, setEmails] = useState<string[]>([]);
-  const [selectedEmails, setSelectedEmails] = useState<string[]>([]);
+  // const [emails, setEmails] = useState<string[]>([]);
+  // const [selectedEmails, setSelectedEmails] = useState<string[]>([]);
   const [selectedValue43, setSelectedValue43] = useState<string[]>([]);
-  const [selectedValue43review, setSelectedValue43review] = useState('');
-  const [selectedValue43conditionstext, setSelectedValue43conditionstext] = useState('');
   const [selectedValue20investigatorName, setSelectedValue20investigatorName] = useState('');
   const [selectedValue20investigatorcontact, setSelectedValue20investigatorcontact] = useState('');
   const [selectedValue20collaborationtype, setSelectedValue20collaborationtype] = useState('');
@@ -42,6 +40,7 @@ export default function CreateDataset() {
   const [selectedValue27fair, setSelectedValue27fair] = useState(false);
   const [selectedValue43text, setSelectedValue43text] = useState('');
   const [clinicalCareDeclaration, setclinicalCareDeclaration] = useState(false);
+  const [institutionName, setinstitutionName] = useState('');
 
   const fetchDiseases = async () => {
     if (!diseaseSearch.trim()) {
@@ -127,7 +126,12 @@ export default function CreateDataset() {
           )}
           <label style={{ display: 'flex', alignItems: 'center' }}>
             {children.length === 0 && (
-              <input type="checkbox" checked={!!isSelected} onChange={() => toggleSelect(code)} />
+              <input
+                type="checkbox"
+                checked={!!isSelected}
+                onChange={() => toggleSelect(code)}
+                disabled={selected['DUO:0000004'] && code !== 'DUO:0000004'}
+              />
             )}
             <span style={{ marginLeft: 8 }}>
               {meta.label} ({code})
@@ -280,7 +284,7 @@ export default function CreateDataset() {
               value={selectedValue19}
               onChange={(e) => setSelectedValue19(e.target.value)}
               style={{
-                width: 'calc(50% - 90px)',
+                width: 'calc(40% - 90px)',
                 padding: 8,
                 fontSize: 16,
                 display: 'inline-block',
@@ -300,7 +304,7 @@ export default function CreateDataset() {
           </div>
         )}
 
-        {isSelected && code === 'DUO:0000020' && (
+        {/* {isSelected && code === 'DUO:0000020' && (
           <div style={{ marginTop: 12, marginLeft: 48 }}>
             <button
               className="button_col"
@@ -335,7 +339,7 @@ export default function CreateDataset() {
               </label>
             ))}
           </div>
-        )}
+        )} */}
 
         {isSelected && code === 'DUO:0000020' && (
           <div style={{ marginTop: 6, marginLeft: 48 }}>
@@ -481,30 +485,6 @@ export default function CreateDataset() {
           </div>
         )}
 
-        {isSelected && code === 'DUO:0000021' && (
-          <div style={{ marginTop: 6, marginLeft: 48 }}>
-            <fieldset
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                border: 'none',
-                padding: 0,
-                gap: '16px',
-              }}
-            >
-              <span style={{ fontWeight: 'bold' }}>Manual Review Required?</span>
-              <label>
-                <input type="radio" name="manual-review" value="yes" />
-                Yes
-              </label>
-              <label>
-                <input type="radio" name="manual-review" value="no" />
-                No
-              </label>
-            </fieldset>
-          </div>
-        )}
-
         {isSelected && code === 'DUO:0000022' && (
           <div style={{ marginTop: 12, marginLeft: 24 }}>
             <select
@@ -601,6 +581,48 @@ export default function CreateDataset() {
                 <span style={{ marginLeft: 10 }}>Project supports FAIR principles</span>
               </strong>
             </label>
+          </div>
+        )}
+
+        {isSelected && code === 'DUO:0000028' && (
+          <div style={{ marginTop: 12, marginLeft: 24 }}>
+            <span>Institution Name: </span>
+            <input
+              placeholder="Type the name of the institution..."
+              value={institutionName}
+              onChange={(e) => setinstitutionName(e.target.value)}
+              style={{
+                width: 'calc(50% - 90px)',
+                padding: 8,
+                fontSize: 16,
+                display: 'inline-block',
+                marginRight: 8,
+              }}
+            />
+          </div>
+        )}
+
+        {isSelected && code === 'DUO:0000028' && (
+          <div style={{ marginTop: 6, marginLeft: 48 }}>
+            <fieldset
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                border: 'none',
+                padding: 0,
+                gap: '16px',
+              }}
+            >
+              <span style={{ fontWeight: 'bold' }}>Require Institutional Approval? </span>
+              <label>
+                <input type="radio" name="institutional-approval" value="yes" />
+                Yes
+              </label>
+              <label>
+                <input type="radio" name="institutional-approval" value="no" />
+                No
+              </label>
+            </fieldset>
           </div>
         )}
 
@@ -724,52 +746,6 @@ export default function CreateDataset() {
           </div>
         )}
 
-        {isSelected && code === 'DUO:0000043' && (
-          <div style={{ marginTop: 6, marginLeft: 48 }}>
-            {' Manual Review Needed? '}
-            <label>
-              <input
-                type="radio"
-                name="manual_review"
-                value="yes"
-                checked={selectedValue43review === 'yes'}
-                onChange={(e) => setSelectedValue43review(e.target.value)}
-                style={{ marginLeft: 4, marginRight: 2 }}
-              />
-              Yes
-            </label>
-            <label style={{ marginLeft: 16 }}>
-              <input
-                type="radio"
-                name="manual_review"
-                value="no"
-                checked={selectedValue43review === 'no'}
-                onChange={(e) => setSelectedValue43review(e.target.value)}
-                style={{ marginRight: 2 }}
-              />
-              No
-            </label>
-          </div>
-        )}
-
-        {isSelected && code === 'DUO:0000043' && (
-          <div style={{ marginTop: 6, marginLeft: 48 }}>
-            {'Additional Conditions (Optional):'}
-            <input
-              placeholder="Must be actively practicing in a licensed facility "
-              value={selectedValue43conditionstext}
-              onChange={(e) => setSelectedValue43conditionstext(e.target.value)}
-              style={{
-                width: 'calc(70% - 90px)',
-                padding: 8,
-                fontSize: 16,
-                display: 'inline-block',
-                marginRight: 8,
-              }}
-            />
-          </div>
-        )}
-
         {children.length > 0 && isExpanded && (
           <div style={{ marginLeft: 16 }}>
             {children.map(([childCode]) => renderNode(childCode))}
@@ -807,9 +783,13 @@ export default function CreateDataset() {
         >
           Create Dataset
         </button>
-        <span onClick={() => navigate('/')} className="back-button">
+        <button onClick={() => navigate('/')} className="back-button">
           Logout
-        </span>
+        </button>
+
+        <button onClick={() => navigate('/maindashboard')} className="back-button">
+          Back
+        </button>
       </div>
     </div>
   );
