@@ -89,25 +89,7 @@ export default function CreateDataset() {
   };
 
   const toggleExpand = (code: string) => setExpanded((e) => ({ ...e, [code]: !e[code] }));
-  const toggleSelect = (code: string) => {
-    setSelected((prevSelected) => {
-      const newSelected = { ...prevSelected };
-
-      // If DUO:0000004 is selected, uncheck everything else
-      if (code === 'DUO:0000004') {
-        Object.keys(newSelected).forEach((k) => {
-          newSelected[k] = k === 'DUO:0000004' ? !prevSelected[code] : false;
-        });
-      } else {
-        // If another option is selected while DUO:0000004 is checked, ignore the selection
-        if (prevSelected['DUO:0000004']) return prevSelected;
-
-        newSelected[code] = !prevSelected[code];
-      }
-
-      return newSelected;
-    });
-  };
+  const toggleSelect = (code: string) => setSelected((s) => ({ ...s, [code]: !s[code] }));
 
   const childrenOf = (rootCode: string) =>
     Object.entries(DUO_METADATA).filter(([, meta]) => meta.subclassOf === rootCode);

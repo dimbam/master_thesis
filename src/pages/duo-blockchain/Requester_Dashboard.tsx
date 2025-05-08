@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import '../.././RequesterSearch.css';
 // import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import { black } from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
 
 const RequesterSearch: React.FC = () => {
   const navigate = useNavigate();
