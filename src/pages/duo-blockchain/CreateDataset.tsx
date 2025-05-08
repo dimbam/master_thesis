@@ -4,6 +4,7 @@ import '../.././CreateDataset.css';
 import { getEmailsViaGateway } from './../ReturnEmails';
 import TooltipInfo from './../TooltipInfo';
 import { useNavigate } from 'react-router-dom';
+import { validateFieldSet } from './FormValidation';
 
 export default function CreateDataset() {
   const navigate = useNavigate();
@@ -43,6 +44,7 @@ export default function CreateDataset() {
   const [institutionName, setinstitutionName] = useState('');
   const [dataReturnCommitment, setdataReturnCommitment] = useState(false);
   const [institutionalApproval, setInstitutionalApproval] = useState('');
+  const [blockMetadata, setblockMetadata] = useState('');
 
   const fetchDiseases = async () => {
     if (!diseaseSearch.trim()) {
@@ -87,7 +89,25 @@ export default function CreateDataset() {
   };
 
   const toggleExpand = (code: string) => setExpanded((e) => ({ ...e, [code]: !e[code] }));
-  const toggleSelect = (code: string) => setSelected((s) => ({ ...s, [code]: !s[code] }));
+  const toggleSelect = (code: string) => {
+    setSelected((prevSelected) => {
+      const newSelected = { ...prevSelected };
+
+      // If DUO:0000004 is selected, uncheck everything else
+      if (code === 'DUO:0000004') {
+        Object.keys(newSelected).forEach((k) => {
+          newSelected[k] = k === 'DUO:0000004' ? !prevSelected[code] : false;
+        });
+      } else {
+        // If another option is selected while DUO:0000004 is checked, ignore the selection
+        if (prevSelected['DUO:0000004']) return prevSelected;
+
+        newSelected[code] = !prevSelected[code];
+      }
+
+      return newSelected;
+    });
+  };
 
   const childrenOf = (rootCode: string) =>
     Object.entries(DUO_METADATA).filter(([, meta]) => meta.subclassOf === rootCode);
@@ -788,11 +808,23 @@ export default function CreateDataset() {
             >
               <span style={{ fontWeight: 'bold' }}>Block Population Metadata ? </span>
               <label>
-                <input type="radio" name="block-metadata" value="yes" />
+                <input
+                  type="radio"
+                  name="block-metadata"
+                  value="yes"
+                  checked={blockMetadata === 'yes'}
+                  onChange={(e) => setblockMetadata(e.target.value)}
+                />
                 Yes
               </label>
               <label>
-                <input type="radio" name="block-metadata" value="no" />
+                <input
+                  type="radio"
+                  name="block-metadata"
+                  value="no"
+                  checked={blockMetadata === 'no'}
+                  onChange={(e) => setblockMetadata(e.target.value)}
+                />
                 No
               </label>
             </fieldset>
@@ -806,49 +838,6 @@ export default function CreateDataset() {
         )}
       </div>
     );
-  };
-
-  const validateForm = () => {
-    // DUO:0000028
-    if (selected['DUO:0000028']) {
-      if (institutionName.trim() === '') {
-        alert('Please specify the Institution Name.');
-        return false;
-      }
-
-      if (institutionalApproval === '') {
-        alert('Please select if you want to require Institutional Approval.');
-        return false;
-      }
-    }
-
-    // DUO:0000029
-    if (selected['DUO:0000029']) {
-      if (!dataReturnCommitment) {
-        alert('Please confirm the Data Return Commitment.');
-        return false;
-      }
-    }
-
-    // DUO:0000043
-    if (selected['DUO:0000043']) {
-      if (selectedValue43.length === 0) {
-        alert('Please select at least one profession for Intended Use.');
-        return false;
-      }
-
-      if (selectedValue43.includes('Other') && selectedValue43text.trim() === '') {
-        alert('Please specify the profession under "Other".');
-        return false;
-      }
-
-      if (!clinicalCareDeclaration) {
-        alert('Please confirm the Clinical Care Use Declaration.');
-        return false;
-      }
-    }
-
-    return true;
   };
 
   return (
@@ -877,7 +866,136 @@ export default function CreateDataset() {
           // }
           // style={{ marginTop: 24, padding: 12, fontSize: 16 }}
           onClick={() => {
-            if (validateForm()) alert('Saved');
+            validateFieldSet(selected, [
+              {
+                code: 'DUO:0000007',
+                value: selectedDiseases,
+                type: 'checkbox',
+                message: 'Please type one disease.',
+              },
+              {
+                code: 'DUO:0000015',
+                value: confirmedExclusion,
+                type: 'checkbox',
+                message: 'Please confirm the Exclusion of Method Development.',
+              },
+              {
+                code: 'DUO:0000015',
+                value: selectedValue15methodPurpose,
+                type: 'checkbox',
+                message: 'Please select Method Purpose.',
+              },
+              {
+                code: 'DUO:0000045',
+                value: orgID,
+                type: 'text',
+                message: 'Please type the Organization ID.',
+              },
+              {
+                code: 'DUO:0000019',
+                value: selectedValue19,
+                type: 'text',
+                message: 'Please type the Publication link or related DOI.',
+              },
+              {
+                code: 'DUO:0000020',
+                value: selectedValue20investigatorName,
+                type: 'text',
+                message: 'Please type the Primary Investigator Name(s).',
+              },
+              {
+                code: 'DUO:0000020',
+                value: selectedValue20investigatorcontact,
+                type: 'text',
+                message: 'Please type the Investigator Contact Info.',
+              },
+              {
+                code: 'DUO:0000020',
+                value: selectedValue20collaborationtype,
+                type: 'dropdown',
+                message: 'Please select Collaboration Type.',
+              },
+              {
+                code: 'DUO:0000020',
+                value: selectedValue20requiredaction,
+                type: 'text',
+                message: 'Please type the Required Collaboration Action.',
+              },
+              {
+                code: 'DUO:0000021',
+                value: selectedValue21approvaltype,
+                type: 'checkbox',
+                message: 'Please select Approval Type.',
+              },
+              {
+                code: 'DUO:0000021',
+                value: selectedValue21contact,
+                type: 'text',
+                message: 'Please type the Review Entity Contact Info.',
+              },
+              {
+                code: 'DUO:0000025',
+                value: startDate,
+                value2: endDate,
+                type: 'daterange',
+                message: 'Please provide a valid start and end date.',
+              },
+              {
+                code: 'DUO:0000027',
+                value: selectedValue27requirement,
+                type: 'checkbox',
+                message:
+                  'Please confirm that you want your work to be used as part of a research project.',
+              },
+              {
+                code: 'DUO:0000027',
+                value: selectedValue27fair,
+                type: 'checkbox',
+                message: 'Please confirm that the Project supports FAIR principles.',
+              },
+              {
+                code: 'DUO:0000028',
+                value: institutionName,
+                type: 'text',
+                message: 'Please specify the Institution Name.',
+              },
+              {
+                code: 'DUO:0000028',
+                value: institutionalApproval,
+                type: 'radio',
+                message: 'Please select if you want to require Institutional Approval.',
+              },
+              {
+                code: 'DUO:0000029',
+                value: dataReturnCommitment,
+                type: 'checkbox',
+                message: 'Please confirm the Data Return Commitment.',
+              },
+              {
+                code: 'DUO:0000043',
+                value: selectedValue43,
+                type: 'checkbox',
+                message: 'Please select at least one profession for Intended Use.',
+              },
+              {
+                code: 'DUO:0000043',
+                value: selectedValue43.includes('Other') ? selectedValue43text : 'valid',
+                type: 'text',
+                message: 'Please specify the profession under "Other".',
+              },
+              {
+                code: 'DUO:0000043',
+                value: clinicalCareDeclaration,
+                type: 'checkbox',
+                message: 'Please confirm the Clinical Care Use Declaration.',
+              },
+              {
+                code: 'DUO:0000044',
+                value: blockMetadata,
+                type: 'radio',
+                message: 'Please select if you want to Block Population Metadata.',
+              },
+            ]);
           }}
         >
           Create Dataset
