@@ -14,20 +14,6 @@
   align-items: center;
 }
 
-.main_dashboard_title {
-  color: black;
-  margin-left: -5rem;
-}
-
-.dashboard-back-button {
-  padding: 0.5rem 1rem;
-  background-color: #000000;
-  color: rgb(255, 255, 255);
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
 .button-row {
   display: flex;
   align-items: center; /* <-- This vertically centers the slash */
@@ -43,12 +29,27 @@
   margin-right: 1rem;
 }
 
+.main_dashboard_title {
+  color: black;
+  margin-left: -5rem;
+}
+
+.dashboard-back-button {
+  padding: 0.5rem 1rem;
+  background-color: #000000;
+  color: rgb(255, 255, 255);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 1rem;
+}
+
 .dashboard-main-buttons-container {
   display: flex;
   gap: 2rem;
   justify-content: center;
-  flex-wrap: wrap; /* optional: wraps buttons on small screens */
-  margin-bottom: 15rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
 }
 
 .dashboard-dropdown {
@@ -96,15 +97,37 @@
   display: block;
 }
 
-.clinical_care_form {
-  background-color: #c2bcbc;
-  border-radius: 8px; /* Keep rounded corners */
-  padding: 0.5rem 1rem;
-  border: 2px solid #000000; /* Add solid black border */
-  width: 55%;
-  box-sizing: border-box;
+.search-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 10rem;
 }
 
-.clinical_care_form_text {
-  font-size: 1rem;
+.searchbar-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  margin-top: -25rem;
+}
+
+.searchbar {
+  background-color: #ececec;
+  border-radius: 8px; /* Keep rounded corners */
+  padding: 0.5rem 1rem;
+  border: 2px solid #000000;
+  color: #000000;
+  width: 400px;
+}
+
+.search-button {
+  padding: 0.75rem 1.5rem;
+  background-color: #000000;
+  border: 1px solid #ffffff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
 }
