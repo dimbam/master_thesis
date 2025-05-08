@@ -41,6 +41,8 @@ export default function CreateDataset() {
   const [selectedValue43text, setSelectedValue43text] = useState('');
   const [clinicalCareDeclaration, setclinicalCareDeclaration] = useState(false);
   const [institutionName, setinstitutionName] = useState('');
+  const [dataReturnCommitment, setdataReturnCommitment] = useState(false);
+  const [institutionalApproval, setInstitutionalApproval] = useState('');
 
   const fetchDiseases = async () => {
     if (!diseaseSearch.trim()) {
@@ -615,14 +617,41 @@ export default function CreateDataset() {
             >
               <span style={{ fontWeight: 'bold' }}>Require Institutional Approval? </span>
               <label>
-                <input type="radio" name="institutional-approval" value="yes" />
+                <input
+                  type="radio"
+                  name="institutional-approval"
+                  value="yes"
+                  checked={institutionalApproval === 'yes'}
+                  onChange={(e) => setInstitutionalApproval(e.target.value)}
+                />
                 Yes
               </label>
               <label>
-                <input type="radio" name="institutional-approval" value="no" />
+                <input
+                  type="radio"
+                  name="institutional-approval"
+                  value="no"
+                  checked={institutionalApproval === 'no'}
+                  onChange={(e) => setInstitutionalApproval(e.target.value)}
+                />
                 No
               </label>
             </fieldset>
+          </div>
+        )}
+
+        {isSelected && code === 'DUO:0000029' && (
+          <div style={{ marginTop: 12, marginLeft: 48 }}>
+            <label>
+              <input
+                type="checkbox"
+                checked={dataReturnCommitment}
+                onChange={() => setdataReturnCommitment((prev) => !prev)}
+              />
+              <strong>
+                <span style={{ marginLeft: 10 }}>Data Return Commitment</span>
+              </strong>
+            </label>
           </div>
         )}
 
@@ -746,6 +775,30 @@ export default function CreateDataset() {
           </div>
         )}
 
+        {isSelected && code === 'DUO:0000044' && (
+          <div style={{ marginTop: 6, marginLeft: 48 }}>
+            <fieldset
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                border: 'none',
+                padding: 0,
+                gap: '16px',
+              }}
+            >
+              <span style={{ fontWeight: 'bold' }}>Block Population Metadata ? </span>
+              <label>
+                <input type="radio" name="block-metadata" value="yes" />
+                Yes
+              </label>
+              <label>
+                <input type="radio" name="block-metadata" value="no" />
+                No
+              </label>
+            </fieldset>
+          </div>
+        )}
+
         {children.length > 0 && isExpanded && (
           <div style={{ marginLeft: 16 }}>
             {children.map(([childCode]) => renderNode(childCode))}
@@ -753,6 +806,49 @@ export default function CreateDataset() {
         )}
       </div>
     );
+  };
+
+  const validateForm = () => {
+    // DUO:0000028
+    if (selected['DUO:0000028']) {
+      if (institutionName.trim() === '') {
+        alert('Please specify the Institution Name.');
+        return false;
+      }
+
+      if (institutionalApproval === '') {
+        alert('Please select if you want to require Institutional Approval.');
+        return false;
+      }
+    }
+
+    // DUO:0000029
+    if (selected['DUO:0000029']) {
+      if (!dataReturnCommitment) {
+        alert('Please confirm the Data Return Commitment.');
+        return false;
+      }
+    }
+
+    // DUO:0000043
+    if (selected['DUO:0000043']) {
+      if (selectedValue43.length === 0) {
+        alert('Please select at least one profession for Intended Use.');
+        return false;
+      }
+
+      if (selectedValue43.includes('Other') && selectedValue43text.trim() === '') {
+        alert('Please specify the profession under "Other".');
+        return false;
+      }
+
+      if (!clinicalCareDeclaration) {
+        alert('Please confirm the Clinical Care Use Declaration.');
+        return false;
+      }
+    }
+
+    return true;
   };
 
   return (
@@ -773,13 +869,16 @@ export default function CreateDataset() {
 
         <button
           className="button_col"
-          onClick={save}
-          disabled={
-            !name ||
-            Object.values(selected).every((v) => !v) ||
-            (selected['DUO:0000007'] && selectedDiseases.length === 0)
-          }
-          style={{ marginTop: 24, padding: 12, fontSize: 16 }}
+          // onClick={save}
+          // disabled={
+          //   !name ||
+          //   Object.values(selected).every((v) => !v) ||
+          //   (selected['DUO:0000007'] && selectedDiseases.length === 0)
+          // }
+          // style={{ marginTop: 24, padding: 12, fontSize: 16 }}
+          onClick={() => {
+            if (validateForm()) alert('Saved');
+          }}
         >
           Create Dataset
         </button>
