@@ -24,16 +24,16 @@ const MainDashboard: React.FC = () => {
         <div className="dashboard-dropdown">
           <span className="dashboard-main-button">Dataset</span>
           <div className="dropdown-content">
-            <div onClick={() => navigate('/createDataset')}>Create Dataset</div>
-            <div onClick={() => navigate('/requesterform')}>View Dataset</div>
+            <div onClick={() => navigate('/createDataset')}>Create Dataset-Provider</div>
+            <div onClick={() => navigate('/requesterform')}>View Dataset-Requester</div>
           </div>
         </div>
 
         <div className="dashboard-dropdown">
           <span className="dashboard-main-button">Model Card</span>
           <div className="dropdown-content">
-            <div onClick={() => navigate('/requesterform')}>Create Model Card</div>
-            <div onClick={() => navigate('/requesterform')}>View Model Card</div>
+            <div onClick={() => navigate('/requesterform')}>Create Model Card-Requester</div>
+            <div onClick={() => navigate('/requesterform')}>View Model Card-Requester</div>
             <div onClick={() => navigate('/requestersearch')}>Open Requester Search Page</div>
           </div>
         </div>

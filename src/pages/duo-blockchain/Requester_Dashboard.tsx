@@ -37,7 +37,7 @@ const RequesterSearch: React.FC = () => {
         <div className="dashboard-dropdown">
           <span className="dashboard-main-button">Dataset</span>
           <div className="dropdown-content">
-            <div onClick={() => navigate('/createDataset')}>Create Dataset</div>
+            {/* <div onClick={() => navigate('/createDataset')}>Request Dataset</div> */}
             <div onClick={() => navigate('/requesterform')}>View Dataset</div>
           </div>
         </div>
@@ -45,8 +45,8 @@ const RequesterSearch: React.FC = () => {
         <div className="dashboard-dropdown">
           <span className="dashboard-main-button">Model Card</span>
           <div className="dropdown-content">
-            <div onClick={() => navigate('/createDataset')}>Create Dataset</div>
-            <div onClick={() => navigate('/requesterform')}>View Dataset</div>
+            {/* <div onClick={() => navigate('/createDataset')}>Request Model Card</div> */}
+            <div onClick={() => navigate('/requesterform')}>View Model Card</div>
           </div>
         </div>
       </div>

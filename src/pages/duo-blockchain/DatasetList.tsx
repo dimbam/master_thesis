@@ -1,47 +1,53 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigate } from 'react-router-dom';
 
-export default function DatasetList({ navigation }) {
+export default function DatasetList() {
   const [datasets, setDatasets] = useState<any[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const unsub = navigation.addListener('focus', load);
-    return unsub;
-  }, [navigation]);
+    load();
+  }, []);
 
-  async function load() {
-    const json = await AsyncStorage.getItem('datasets');
+  const load = () => {
+    const json = localStorage.getItem('datasets');
     if (json) setDatasets(JSON.parse(json));
-  }
+  };
 
   return (
-    <View style={styles.container}>
-      <Button title="Create New Dataset" onPress={() => navigation.navigate('Create')} />
-      <FlatList
-        data={datasets}
-        keyExtractor={(_, i) => i.toString()}
-        renderItem={({ item }) => (
-          <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('Detail', item)}>
-            <Text style={styles.title}>{item.name}</Text>
-            <Text style={styles.codes}>Permissions: {item.duoCodes.join(', ')}</Text>
+    <div style={{ padding: '1rem' }}>
+      <button
+        style={{ padding: '0.5rem 1rem', marginBottom: '1rem' }}
+        onClick={() => navigate('/createDataset')}
+      >
+        Create New Dataset
+      </button>
+
+      {datasets.length === 0 ? (
+        <p>No datasets available.</p>
+      ) : (
+        datasets.map((item, i) => (
+          <div
+            key={i}
+            onClick={() => navigate('/datasetDetail', { state: item })}
+            style={{
+              padding: '1rem',
+              borderBottom: '1px solid #ddd',
+              cursor: 'pointer',
+            }}
+          >
+            <h3 style={{ margin: 0 }}>{item.name}</h3>
+            <p style={{ margin: '0.5rem 0', color: '#666' }}>
+              Permissions: {item.duoCodes?.join(', ') || 'None'}
+            </p>
             {item.metadata?.disease && (
-              <Text style={styles.codes}>Disease constraint: {item.metadata.disease}</Text>
+              <p style={{ margin: 0, color: '#666' }}>
+                Disease constraint: {item.metadata.disease}
+              </p>
             )}
-          </TouchableOpacity>
-        )}
-      />
-    </View>
+          </div>
+        ))
+      )}
+    </div>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16 },
-  item: {
-    padding: 12,
-    borderBottomWidth: 1,
-    borderColor: '#ddd',
-  },
-  title: { fontSize: 18 },
-  codes: { color: '#666', marginTop: 4 },
-});
