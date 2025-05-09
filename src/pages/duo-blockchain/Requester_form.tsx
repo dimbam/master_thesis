@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { DUO_METADATA } from './DUO_METADATA';
 import '../.././CreateDataset.css';
-import { getEmailsViaGateway } from './../ReturnEmails';
 import TooltipInfo from './../TooltipInfo';
 import { useNavigate } from 'react-router-dom';
 
@@ -18,11 +17,20 @@ export default function Requesterform() {
   const [selectedDiseases, setSelectedDiseases] = useState<{ label: string; id: string }[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
-  const [emails, setEmails] = useState<string[]>([]);
-
+  const [selectedValue20willingstate, setSelectedValue20willingstate] = useState(false);
+  const [selectedValue20collaborationMethod, setselectedValue20collaborationMethod] = useState<
+    string[]
+  >([]);
+  const [confirmedExclusion, setConfirmedExclusion] = useState(false);
+  const [otherCollaborationText, setotherCollaborationText] = useState('');
+  const [selectedValue27contact, setSelectedValue27contact] = useState('');
+  const [selectedValue28affilInst, setselectedValue28affilInst] = useState('');
   const [selectedValue43, setSelectedValue43] = useState<string[]>([]);
   const [selectedValue43text, setSelectedValue43text] = useState('');
   const [clinicalCareDeclaration, setclinicalCareDeclaration] = useState(false);
+  const [dataReturnCommitment, setdataReturnCommitment] = useState(false);
+  const [ancestryExcluded, setancestryExcluded] = useState(false);
+  const [selectedValue29URL, setselectedValue29URL] = useState('');
 
   const fetchDiseases = async () => {
     if (!diseaseSearch.trim()) {
@@ -183,6 +191,164 @@ export default function Requesterform() {
                 }}
               />
             )}
+          </div>
+        )}
+
+        {isSelected && code === 'DUO:0000020' && (
+          <div style={{ marginTop: 12, marginLeft: 48 }}>
+            <label>
+              <input
+                type="checkbox"
+                checked={selectedValue20willingstate}
+                onChange={() => setSelectedValue20willingstate((prev) => !prev)}
+              />
+              <strong>
+                <span style={{ marginLeft: 10 }}>Statement of Willingness to Collaborate</span>
+              </strong>
+            </label>
+          </div>
+        )}
+
+        {isSelected && code === 'DUO:0000020' && (
+          <div style={{ marginTop: 12, marginLeft: 48 }}>
+            <strong>Proposed Collaboration Method: </strong>
+            {[
+              'Co-authorship',
+              'Shared methodology',
+              'Periodic updates',
+              'Discussion meeting',
+              'Other',
+            ].map((option) => (
+              <label key={option} style={{ display: 'block' }}>
+                <input
+                  type="checkbox"
+                  checked={selectedValue20collaborationMethod.includes(option)}
+                  onChange={() => {
+                    setselectedValue20collaborationMethod((prev) =>
+                      prev.includes(option) ? prev.filter((o) => o !== option) : [...prev, option],
+                    );
+                  }}
+                />
+                <span style={{ marginLeft: 8 }}>{option}</span>
+              </label>
+            ))}
+            {selectedValue20collaborationMethod.includes('Other') && (
+              <input
+                type="text"
+                placeholder="Please specify"
+                value={otherCollaborationText}
+                onChange={(e) => setotherCollaborationText(e.target.value)}
+                style={{
+                  marginTop: 8,
+                  padding: 6,
+                  fontSize: 14,
+                  width: '100%',
+                  maxWidth: 400,
+                  boxSizing: 'border-box',
+                }}
+              />
+            )}
+          </div>
+        )}
+
+        {isSelected && code === 'DUO:0000015' && (
+          <div style={{ marginTop: 12, marginLeft: 48 }}>
+            <label>
+              <input
+                type="checkbox"
+                checked={confirmedExclusion}
+                onChange={() => setConfirmedExclusion((prev) => !prev)}
+              />
+              <strong>
+                <span style={{ marginLeft: 10 }}>Confirm Exclusion of Method Development</span>
+              </strong>
+            </label>
+          </div>
+        )}
+
+        {isSelected && code === 'DUO:0000027' && (
+          <div style={{ marginTop: 6, marginLeft: 48 }}>
+            <strong>{'Project Contact Info:'}</strong>
+            <input
+              placeholder="Email or link to project lead contact page "
+              value={selectedValue27contact}
+              onChange={(e) => setSelectedValue27contact(e.target.value)}
+              style={{
+                width: 'calc(70% - 90px)',
+                padding: 8,
+                fontSize: 16,
+                display: 'inline-block',
+                marginRight: 8,
+              }}
+            />
+          </div>
+        )}
+
+        {isSelected && code === 'DUO:0000028' && (
+          <div style={{ marginTop: 6, marginLeft: 48 }}>
+            <strong>{'Add Affiliated Institution:'}</strong>
+            <input
+              placeholder="Enter Affiliated Institution"
+              value={selectedValue28affilInst}
+              onChange={(e) => setselectedValue28affilInst(e.target.value)}
+              style={{
+                width: 'calc(70% - 90px)',
+                padding: 8,
+                fontSize: 16,
+                display: 'inline-block',
+                marginRight: 8,
+              }}
+            />
+          </div>
+        )}
+
+        {isSelected && code === 'DUO:0000029' && (
+          <div style={{ marginTop: 12, marginLeft: 48 }}>
+            <label>
+              <input
+                type="checkbox"
+                checked={dataReturnCommitment}
+                onChange={() => setdataReturnCommitment((prev) => !prev)}
+              />
+              <strong>
+                <span style={{ marginLeft: 10 }}>Data Return Commitment</span>
+              </strong>
+            </label>
+          </div>
+        )}
+
+        {isSelected && code === 'DUO:0000029' && (
+          <div style={{ marginTop: 12, marginLeft: 48 }}>
+            <label>
+              <input
+                type="checkbox"
+                checked={ancestryExcluded}
+                onChange={() => setancestryExcluded((prev) => !prev)}
+              />
+              <strong>
+                <span style={{ marginLeft: 10 }}>
+                  I confirm that ancestry inference is excluded from this project{' '}
+                </span>
+              </strong>
+            </label>
+          </div>
+        )}
+
+        {isSelected && code === 'DUO:0000029' && (
+          <div style={{ marginTop: 6, marginLeft: 48 }}>
+            <strong>{'Project Repository URL:'}</strong>
+            <input
+              placeholder="Link to project repository "
+              value={selectedValue29URL}
+              onChange={(e) => setselectedValue29URL(e.target.value)}
+              style={{
+                width: 'calc(70% - 90px)',
+                padding: 8,
+                fontSize: 16,
+                display: 'inline-block',
+                marginRight: 8,
+              }}
+            />
           </div>
         )}
 
