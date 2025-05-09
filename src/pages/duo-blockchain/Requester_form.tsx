@@ -98,21 +98,25 @@ export default function Requesterform() {
   // };
 
   const saveJson = () => {
+    const isNoRestriction = selected['DUO:0000004'];
+
+    const filteredSelected = isNoRestriction ? { 'DUO:0000004': true } : selected;
+
     const formData = {
-      name,
-      selected,
-      selectedValue20willingstate,
-      selectedValue20collaborationMethod,
-      confirmedExclusion,
-      otherCollaborationText,
-      selectedValue27contact,
-      selectedValue28affilInst,
-      selectedValue43,
-      selectedValue43text,
-      clinicalCareDeclaration,
-      dataReturnCommitment,
-      ancestryExcluded,
-      selectedValue29URL,
+      name: isNoRestriction ? '' : name,
+      selected: filteredSelected,
+      selectedValue20willingstate: isNoRestriction ? '' : selectedValue20willingstate,
+      selectedValue20collaborationMethod: isNoRestriction ? '' : selectedValue20collaborationMethod,
+      confirmedExclusion: isNoRestriction ? false : confirmedExclusion,
+      otherCollaborationText: isNoRestriction ? '' : otherCollaborationText,
+      selectedValue27contact: isNoRestriction ? '' : selectedValue27contact,
+      selectedValue28affilInst: isNoRestriction ? '' : selectedValue28affilInst,
+      selectedValue43: isNoRestriction ? [] : selectedValue43,
+      selectedValue43text: isNoRestriction ? '' : selectedValue43text,
+      clinicalCareDeclaration: isNoRestriction ? false : clinicalCareDeclaration,
+      dataReturnCommitment: isNoRestriction ? false : dataReturnCommitment,
+      ancestryExcluded: isNoRestriction ? false : ancestryExcluded,
+      selectedValue29URL: isNoRestriction ? '' : selectedValue29URL,
     };
 
     const jsonBlob = new Blob([JSON.stringify(formData, null, 2)], { type: 'application/json' });
