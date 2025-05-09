@@ -101,9 +101,18 @@ export default function Requesterform() {
     const formData = {
       name,
       selected,
+      selectedValue20willingstate,
+      selectedValue20collaborationMethod,
+      confirmedExclusion,
+      otherCollaborationText,
+      selectedValue27contact,
+      selectedValue28affilInst,
       selectedValue43,
       selectedValue43text,
       clinicalCareDeclaration,
+      dataReturnCommitment,
+      ancestryExcluded,
+      selectedValue29URL,
     };
 
     const jsonBlob = new Blob([JSON.stringify(formData, null, 2)], { type: 'application/json' });
@@ -427,6 +436,23 @@ export default function Requesterform() {
                 </p>
               </div>
             )}
+          </div>
+        )}
+
+        {isSelected && code === 'DUO:0000029' && (
+          <div style={{ marginTop: 12, marginLeft: 48 }}>
+            <label>
+              <input
+                type="checkbox"
+                checked={ancestryExcluded}
+                onChange={() => setancestryExcluded((prev) => !prev)}
+              />
+              <strong>
+                <span style={{ marginLeft: 10 }}>
+                  I confirm that ancestry inference is excluded from this project{' '}
+                </span>
+              </strong>
+            </label>
           </div>
         )}
 
