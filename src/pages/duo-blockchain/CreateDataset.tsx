@@ -11,8 +11,13 @@ export default function CreateDataset() {
   const [name, setName] = useState('');
   const [selected, setSelected] = useState<Record<string, boolean>>({});
   const [expanded, setExpanded] = useState<Record<string, boolean>>({
-    'DUO:0000001': true,
-    'DUO:0000017': false,
+    'DUO:0000001': false,
+    'DUO:0000018': false,
+    'DUO:0000050': false,
+    'DUO:0000051': false,
+    'DUO:0000052': false,
+    'DUO:0000053': false,
+    'DUO:0000054': false,
   });
   const [diseaseSearch, setDiseaseSearch] = useState('');
   const [diseaseOptions, setDiseaseOptions] = useState<{ label: string; id: string }[]>([]);
@@ -45,6 +50,7 @@ export default function CreateDataset() {
   const [dataReturnCommitment, setdataReturnCommitment] = useState(false);
   const [institutionalApproval, setInstitutionalApproval] = useState('');
   const [blockMetadata, setblockMetadata] = useState('');
+  const [selectedValue18noRestriction, setselectedValue18noRestriction] = useState(false);
 
   const fetchDiseases = async () => {
     if (!diseaseSearch.trim()) {
@@ -94,6 +100,29 @@ export default function CreateDataset() {
   const childrenOf = (rootCode: string) =>
     Object.entries(DUO_METADATA).filter(([, meta]) => meta.subclassOf === rootCode);
 
+  const saveJson = () => {
+    const isNoRestriction = selected['DUO:0000004'];
+
+    const filteredSelected = isNoRestriction ? { 'DUO:0000004': true } : selected;
+
+    const formData = {
+      name: isNoRestriction ? '' : name,
+      selected: filteredSelected,
+    };
+
+    const jsonBlob = new Blob([JSON.stringify(formData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(jsonBlob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'form_data.json';
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url); // Free memory
+  };
+
   const save = () => {
     const codes = Object.entries(selected)
       .filter(([, v]) => v)
@@ -110,6 +139,16 @@ export default function CreateDataset() {
     localStorage.setItem('datasets', JSON.stringify(arr));
     alert('Dataset saved!');
   };
+
+  const hideCodeDisplay = new Set([
+    'DUO:0000001',
+    'DUO:0000018',
+    'DUO:0000050',
+    'DUO:0000051',
+    'DUO:0000052',
+    'DUO:0000053',
+    'DUO:0000054',
+  ]);
 
   const renderNode = (code: string) => {
     const meta = DUO_METADATA[code]!;
@@ -138,7 +177,7 @@ export default function CreateDataset() {
               />
             )}
             <span style={{ marginLeft: 8 }}>
-              {meta.label} ({code})
+              {meta.label} {!hideCodeDisplay.has(code) && ` (${code})`}
               <TooltipInfo text={meta.definition} />
             </span>
           </label>
@@ -278,6 +317,21 @@ export default function CreateDataset() {
                 <span style={{ marginLeft: 8 }}>{option}</span>
               </label>
             ))}
+          </div>
+        )}
+
+        {isSelected && code === 'DUO:0000018' && (
+          <div style={{ marginTop: 12, marginLeft: 48 }}>
+            <label>
+              <input
+                type="checkbox"
+                checked={selectedValue18noRestriction}
+                onChange={() => setselectedValue18noRestriction((prev) => !prev)}
+              />
+              <strong>
+                <span style={{ marginLeft: 10 }}>No Restriction</span>
+              </strong>
+            </label>
           </div>
         )}
 
@@ -836,7 +890,17 @@ export default function CreateDataset() {
         </div>
 
         <h3>Select DUO Permissions</h3>
-        <div>{['DUO:0000001', 'DUO:0000017'].map((root) => renderNode(root))}</div>
+        <div>
+          {[
+            'DUO:0000001',
+            'DUO:0000018',
+            'DUO:0000050',
+            'DUO:0000051',
+            'DUO:0000052',
+            'DUO:0000053',
+            'DUO:0000054',
+          ].map((root) => renderNode(root))}
+        </div>
 
         <button
           className="button_col"
@@ -978,6 +1042,7 @@ export default function CreateDataset() {
                 message: 'Please select if you want to Block Population Metadata.',
               },
             ]);
+            saveJson();
           }}
         >
           Create Dataset
