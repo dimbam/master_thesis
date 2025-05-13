@@ -135,6 +135,20 @@ app.get('/get-emails', async (req, res) => {
   const session = driver1.session();
 });
 
+const fs = require('fs');
+const path = require('path');
+
+app.get('/form', (req, res) => {
+  const filePath = path.join(__dirname, 'storage', 'form_datatest3.json');
+  fs.readFile(filePath, 'utf-8', (err, data) => {
+    if (err) {
+      console.error('Failed to read form_data.json:', err);
+      return res.status(500).send('Error while reading stored form');
+    }
+    res.json(JSON.parse(data));
+  });
+});
+
 const port = 5000;
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);

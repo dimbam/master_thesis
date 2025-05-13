@@ -4,14 +4,59 @@ import { DUO_METADATA } from './DUO_METADATA';
 import TooltipInfo from './../TooltipInfo';
 import '../.././FilteredForm.css';
 
-export default function FilteredForm() {
-  const location = useLocation();
-  const { roots, selected: initialSelected } = location.state || {};
+const res = await fetch('http://localhost:5000/form');
+const storedForm = await res.json();
 
-  const [selected, setSelected] = useState<Record<string, boolean>>(initialSelected || {});
-  const [expanded, setExpanded] = useState<Record<string, boolean>>(
-    Object.fromEntries((roots || []).map((r: string) => [r, true])),
-  );
+const FORM_ROOTS = [
+  'DUO:0000001',
+  'DUO:0000018',
+  'DUO:0000050',
+  'DUO:0000051',
+  'DUO:0000052',
+  'DUO:0000053',
+  'DUO:0000054',
+];
+
+function matchFormSections(selected: Record<string, boolean>) {
+  const matched = new Set<string>();
+  for (const code of Object.keys(selected)) {
+    if (!selected[code]) continue;
+
+    let current = code;
+    while (DUO_METADATA[current]?.subclassOf) {
+      current = DUO_METADATA[current].subclassOf;
+      if (FORM_ROOTS.includes(current)) {
+        matched.add(current);
+        break;
+      }
+    }
+  }
+  return Array.from(matched);
+}
+
+export default function FilteredForm() {
+  const [matchedRoots, setMatchedRoots] = useState<string[]>([]);
+  const [selected, setSelected] = useState<Record<string, boolean>>({});
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+
+  const loadRequesterForm = async () => {
+    try {
+      const res = await fetch('http://localhost:5000/form');
+      const storedForm = await res.json();
+
+      const matched = matchFormSections(storedForm.selected);
+      setMatchedRoots(matched);
+      const expand = Object.fromEntries(matched.map((r) => [r, true]));
+      setExpanded(expand);
+      const emptySelected: Record<string, boolean> = {};
+      Object.keys(storedForm.selected).forEach((code) => {
+        emptySelected[code] = false;
+      });
+      setSelected(emptySelected);
+    } catch (err) {
+      console.error('Error loading stored form:', err);
+    }
+  };
 
   const toggleSelect = (code: string) => setSelected((s) => ({ ...s, [code]: !s[code] }));
 
@@ -64,7 +109,10 @@ export default function FilteredForm() {
   return (
     <div className="formlayout" style={{ padding: 24 }}>
       <h2>Filtered DUO Form</h2>
-      {(roots || []).map((rootCode: string) => renderNode(rootCode))}
+      <button onClick={loadRequesterForm} style={{ marginBottom: 16 }}>
+        Load Requester Form
+      </button>
+      {matchedRoots.map((rootCode: string) => renderNode(rootCode))}
     </div>
   );
 }
