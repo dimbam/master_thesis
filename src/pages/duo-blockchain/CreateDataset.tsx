@@ -150,6 +150,33 @@ export default function CreateDataset() {
     'DUO:0000054',
   ]);
 
+  const FORM_ROOTS = [
+    'DUO:0000001',
+    'DUO:0000018',
+    'DUO:0000050',
+    'DUO:0000051',
+    'DUO:0000052',
+    'DUO:0000053',
+    'DUO:0000054',
+  ];
+
+  function matchFormSections(selected: Record<string, boolean>) {
+    const matched = new Set<string>();
+    for (const code of Object.keys(selected)) {
+      if (!selected[code]) continue;
+
+      let current = code;
+      while (DUO_METADATA[current]?.subclassOf) {
+        current = DUO_METADATA[current].subclassOf;
+        if (FORM_ROOTS.includes(current)) {
+          matched.add(current);
+          break;
+        }
+      }
+    }
+    return Array.from(matched);
+  }
+
   const renderNode = (code: string) => {
     const meta = DUO_METADATA[code]!;
     const children = childrenOf(code);
@@ -1042,7 +1069,13 @@ export default function CreateDataset() {
                 message: 'Please select if you want to Block Population Metadata.',
               },
             ]);
-            saveJson();
+            const matchedRoots = matchFormSections(selected);
+            navigate('/filteredform', {
+              state: {
+                roots: matchedRoots,
+                selected, // pass selections to keep UI state
+              },
+            });
           }}
         >
           Create Dataset

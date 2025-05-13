@@ -11,6 +11,7 @@ import ModelcardDashboard from './pages/ModelcardDashboard';
 import CreateDataset from './pages/duo-blockchain/CreateDataset';
 import Requesterform from './pages/duo-blockchain/Requester_form';
 import RequesterSearch from './pages/duo-blockchain/Requester_Dashboard';
+import FilteredForm from './pages/duo-blockchain/FilteredForm';
 import Store from './pages/Store_string';
 import logo from '.././luce.png';
 
@@ -75,6 +76,7 @@ function App() {
         <Route path="/createDataset" element={<CreateDataset />} />
         <Route path="/requesterform" element={<Requesterform />} />
         <Route path="/requestersearch" element={<RequesterSearch />} />
+        <Route path="/filteredform" element={<FilteredForm />} />
         <Route path="/store" element={<Store />} />
       </Routes>
     </BrowserRouter>
