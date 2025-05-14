@@ -7,6 +7,7 @@ const RequesterSearch: React.FC = () => {
   const navigate = useNavigate();
   const [searchValue, setsearchValue] = useState('');
   const [results, setResults] = useState<any[]>([]);
+  const [selectedFilter, setSelectedFilter] = useState('');
 
   const handleSearch = async () => {
     try {
@@ -16,12 +17,16 @@ const RequesterSearch: React.FC = () => {
       console.log('[DEBUG] Search input:', searchValue);
       console.log('[DEBUG] Full data sample:', Object.entries(jsonData).slice(0, 3));
 
+      // Filter results based on the search input and selected filter (type)
       const filtered = Object.entries(jsonData)
         .map(([key, value]: any) => ({ id: key, ...value })) // Makes { id: "DUO:xxx", label: "..." }
         .filter(
           (item) =>
-            item.label.toLowerCase().includes(searchValue.toLowerCase()) ||
-            item.id.toLowerCase().includes(searchValue.toLowerCase()),
+            // Check if it matches the search term (either by label or id)
+            (item.label.toLowerCase().includes(searchValue.toLowerCase()) ||
+              item.id.toLowerCase().includes(searchValue.toLowerCase())) &&
+            // Filter by selectedFilter (type) if set
+            (selectedFilter === '' || item.type === selectedFilter), // New filter logic based on `type`
         );
 
       console.log('[DEBUG] Filtered search results:', filtered);
@@ -41,6 +46,20 @@ const RequesterSearch: React.FC = () => {
       <div className="search-page">
         <div className="main_dashboard-header">
           <h1 className="main_dashboard_title">Requester Dashboard</h1>
+          <div className="filter-buttons-container">
+            <button
+              onClick={() => navigate('/requesterform')}
+              className="filter-button dataset-button"
+            >
+              Dataset
+            </button>
+            <button
+              onClick={() => navigate('/requesterform')}
+              className="filter-button modelcard-button"
+            >
+              Model Card
+            </button>
+          </div>
           <div className="button-row">
             <button onClick={() => navigate('/maindashboard')} className="dashboard-back-button">
               Back
@@ -53,6 +72,17 @@ const RequesterSearch: React.FC = () => {
         </div>
 
         <div className="searchbar-container">
+          <div className="dropdown-container">
+            <select
+              value={selectedFilter}
+              onChange={(e) => setSelectedFilter(e.target.value)}
+              className="search-filter-dropdown"
+            >
+              <option value="">Search Filters</option>
+              <option value="Dataset">Dataset</option>
+              <option value="Model Card">Model Card</option>
+            </select>
+          </div>
           <input
             className="searchbar"
             type="text"
@@ -85,22 +115,6 @@ const RequesterSearch: React.FC = () => {
         )}
 
         <div className="dashboard-main-buttons-container">
-          <div className="dashboard-dropdown">
-            <span className="dashboard-main-button">Dataset</span>
-            <div className="dropdown-content">
-              {/* <div onClick={() => navigate('/createDataset')}>Request Dataset</div> */}
-              <div onClick={() => navigate('/requesterform')}>View Dataset</div>
-            </div>
-          </div>
-
-          <div className="dashboard-dropdown">
-            <span className="dashboard-main-button">Model Card</span>
-            <div className="dropdown-content">
-              {/* <div onClick={() => navigate('/createDataset')}>Request Model Card</div> */}
-              <div onClick={() => navigate('/requesterform')}>View Model Card</div>
-            </div>
-          </div>
-
           <div className="dashboard-dropdown">
             <span className="dashboard-main-button" onClick={handleClearSearch}>
               Clear Search
