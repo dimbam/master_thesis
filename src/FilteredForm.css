@@ -3,3 +3,17 @@
   border: 1px solid #ffffff;
   color: #000000;
 }
+
+.form_title {
+  color: #000000;
+  background-color: white;
+}
+
+.load_button {
+  background-color: #000000;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  margin-right: 5rem;
+}

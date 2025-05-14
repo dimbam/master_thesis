@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { DUO_METADATA } from './DUO_METADATA';
 import TooltipInfo from './../TooltipInfo';
 import '../.././FilteredForm.css';
@@ -35,6 +36,7 @@ function matchFormSections(selected: Record<string, boolean>) {
 }
 
 export default function FilteredForm() {
+  const navigate = useNavigate();
   const [matchedRoots, setMatchedRoots] = useState<string[]>([]);
   const [selected, setSelected] = useState<Record<string, boolean>>({});
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
@@ -108,11 +110,14 @@ export default function FilteredForm() {
 
   return (
     <div className="formlayout" style={{ padding: 24 }}>
-      <h2>Filtered DUO Form</h2>
-      <button onClick={loadRequesterForm} style={{ marginBottom: 16 }}>
+      <h2 className="form_title">Filtered DUO Form</h2>
+      <button className="load_button" onClick={loadRequesterForm} style={{ marginBottom: 16 }}>
         Load Requester Form
       </button>
       {matchedRoots.map((rootCode: string) => renderNode(rootCode))}
+      <button className="load_button" onClick={() => navigate('/requestersearch')}>
+        Back
+      </button>
     </div>
   );
 }

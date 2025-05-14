@@ -1,13 +1,13 @@
 {
-  "DUO:0000001": { "label": "What type of use will your data be permitted for?" },
-  "DUO:0000004": { "label": "No restriction" },
-  "DUO:0000006": { "label": "Health/Medical/Biomedical Research" },
-  "DUO:0000007": { "label": "Disease Specific Research" },
-  "DUO:0000011": { "label": "Population Origins/Ancestry Only" },
-  "DUO:0000012": { "label": "Research‑Specific Restrictions" },
-  "DUO:0000015": { "label": "No General Methods Research" },
-  "DUO:0000016": { "label": "Genetic Studies Only" },
-  "DUO:0000017": { "label": "Data Use Modifier" },
-  "DUO:0000018": { "label": "Commercial Use Restrictions" },
-  "DUO:0000019": { "label": "Results Must Be Published" }
+  "Dataset:0000001": { "label": "What type of use will your data be permitted for?" },
+  "Dataset:0000004": { "label": "No restriction" },
+  "Dataset:0000006": { "label": "Health/Medical/Biomedical Research" },
+  "Dataset:0000007": { "label": "Disease Specific Research" },
+  "Dataset:0000011": { "label": "Population Origins/Ancestry Only" },
+  "Dataset:0000012": { "label": "Research‑Specific Restrictions" },
+  "Dataset:0000015": { "label": "No General Methods Research" },
+  "Dataset:0000016": { "label": "Genetic Studies Only" },
+  "Dataset:0000017": { "label": "Data Use Modifier" },
+  "Dataset:0000018": { "label": "Commercial Use Restrictions" },
+  "Dataset:0000019": { "label": "Results Must Be Published" }
 }
