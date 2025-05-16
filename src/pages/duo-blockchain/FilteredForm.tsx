@@ -47,6 +47,9 @@ export default function FilteredForm() {
   const [orgID, setorgID] = useState('');
   const [selectedValue19, setSelectedValue19] = useState('');
   const [selectedValue22, setSelectedValue22] = useState('');
+  const [selectedValue22dropcountries, setSelectedValue22dropcountries] = useState('');
+  const [selectedValue22dropcontinents, setSelectedValue22dropcontinents] = useState('');
+  const [selectedValue22dropgroups, setSelectedValue22dropgroups] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [selectedValue43, setSelectedValue43] = useState<string[]>([]);
@@ -549,7 +552,7 @@ export default function FilteredForm() {
           </div>
         )}
 
-        {isSelected && code === 'DUO:0000026' && (
+        {isSelected && code === 'DUO:0000022' && (
           <div style={{ marginTop: 12, marginLeft: 24 }}>
             <select
               value={selectedValue22}
@@ -557,10 +560,57 @@ export default function FilteredForm() {
               style={{ padding: 8, fontSize: 16, width: '300px' }}
             >
               <option value="">Select an option</option>
-              <option value="europe">Europe</option>
-              <option value="asia">Asia</option>
-              <option value="africa">Africa</option>
+              <option value="Countries">Countries</option>
+              <option value="Continents">Continents</option>
+              <option value="Groups/Unions">Groups/Unions</option>
             </select>
+
+            {selectedValue22 === 'Countries' && (
+              <div style={{ marginTop: 12, marginLeft: 24 }}>
+                <select
+                  value={selectedValue22dropcountries}
+                  onChange={(e) => setSelectedValue22dropcountries(e.target.value)}
+                  style={{ padding: 8, fontSize: 16, width: '300px' }}
+                >
+                  <option value="">Select an option</option>
+                  <option value="Countries">Countries</option>
+                  <option value="Continents">Continents</option>
+                  <option value="Groups/Unions">Groups/Unions</option>
+                </select>
+              </div>
+            )}
+
+            {selectedValue22 === 'Continents' && (
+              <div style={{ marginTop: 12, marginLeft: 24 }}>
+                <select
+                  value={selectedValue22dropcontinents}
+                  onChange={(e) => setSelectedValue22dropcontinents(e.target.value)}
+                  style={{ padding: 8, fontSize: 16, width: '300px' }}
+                >
+                  <option value="">Select an option</option>
+                  <option value="Europe">Europe</option>
+                  <option value="Asia">Asia</option>
+                  <option value="Africa">Africa</option>
+                  <option value="Oceania">Oceania</option>
+                  <option value="America">America</option>
+                </select>
+              </div>
+            )}
+
+            {selectedValue22 === 'Groups/Unions' && (
+              <div style={{ marginTop: 12, marginLeft: 24 }}>
+                <select
+                  value={selectedValue22dropgroups}
+                  onChange={(e) => setSelectedValue22dropgroups(e.target.value)}
+                  style={{ padding: 8, fontSize: 16, width: '300px' }}
+                >
+                  <option value="">Select an option</option>
+                  <option value="Countries">Countries</option>
+                  <option value="Continents">Continents</option>
+                  <option value="Groups/Unions">Groups/Unions</option>
+                </select>
+              </div>
+            )}
           </div>
         )}
 

@@ -28,6 +28,9 @@ export default function CreateDataset() {
   const [orgID, setorgID] = useState('');
   const [selectedValue19, setSelectedValue19] = useState('');
   const [selectedValue22, setSelectedValue22] = useState('');
+  const [selectedValue22dropcontinents, setSelectedValue22dropcontinents] = useState('');
+  const [selectedValue22dropgroups, setSelectedValue22dropgroups] = useState('');
+  const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   // const [emails, setEmails] = useState<string[]>([]);
@@ -51,6 +54,7 @@ export default function CreateDataset() {
   const [institutionalApproval, setInstitutionalApproval] = useState('');
   const [blockMetadata, setblockMetadata] = useState('');
   const [selectedValue18noRestriction, setselectedValue18noRestriction] = useState(false);
+  const [countries, setCountries] = useState<string[]>([]);
 
   const fetchDiseases = async () => {
     if (!diseaseSearch.trim()) {
@@ -91,6 +95,17 @@ export default function CreateDataset() {
       setDiseaseOptions([]);
     } finally {
       setIsSearching(false);
+    }
+  };
+
+  const fetchCountries = async () => {
+    try {
+      const res = await fetch('https://restcountries.com/v3.1/all');
+      const data = await res.json();
+      const names = data.map((country: any) => country.name.common).sort();
+      setCountries(names);
+    } catch (err) {
+      console.error('Error fetching countries:', err);
     }
   };
 
@@ -530,14 +545,106 @@ export default function CreateDataset() {
           <div style={{ marginTop: 12, marginLeft: 24 }}>
             <select
               value={selectedValue22}
-              onChange={(e) => setSelectedValue22(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                setSelectedValue22(val);
+                if (val === 'Countries') {
+                  fetchCountries();
+                }
+              }}
               style={{ padding: 8, fontSize: 16, width: '300px' }}
             >
               <option value="">Select an option</option>
-              <option value="europe">Europe</option>
-              <option value="asia">Asia</option>
-              <option value="africa">Africa</option>
+              <option value="Countries">Countries</option>
+              <option value="Continents">Continents</option>
+              <option value="Groups/Unions">Groups/Unions</option>
             </select>
+
+            {selectedValue22 === 'Countries' && (
+              <div style={{ marginTop: 12, marginLeft: 24 }}>
+                <select
+                  value=""
+                  onChange={(e) => {
+                    const country = e.target.value;
+                    if (country && !selectedCountries.includes(country)) {
+                      setSelectedCountries((prev) => [...prev, country]);
+                    }
+                  }}
+                  style={{ padding: 8, fontSize: 16, width: '300px' }}
+                >
+                  <option value="">Select a Country</option>
+                  {countries.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+
+                {selectedCountries.length > 0 && (
+                  <div style={{ marginTop: 12, marginLeft: 24 }}>
+                    <strong>Selected Countries:</strong>
+                    {selectedCountries.map((country) => (
+                      <div
+                        key={country}
+                        style={{ display: 'flex', alignItems: 'center', marginTop: 4 }}
+                      >
+                        <span>{country}</span>
+                        <button
+                          className="button_col"
+                          onClick={() =>
+                            setSelectedCountries((prev) => prev.filter((c) => c !== country))
+                          }
+                          style={{ marginLeft: 8 }}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {selectedValue22 === 'Continents' && (
+              <div style={{ marginTop: 12, marginLeft: 24 }}>
+                <select
+                  value={selectedValue22dropcontinents}
+                  onChange={(e) => setSelectedValue22dropcontinents(e.target.value)}
+                  style={{ padding: 8, fontSize: 16, width: '300px' }}
+                >
+                  <option value="">Select an option</option>
+                  <option value="Europe">Europe</option>
+                  <option value="Asia">Asia</option>
+                  <option value="Africa">Africa</option>
+                  <option value="Oceania">Oceania</option>
+                  <option value="America">America</option>
+                </select>
+              </div>
+            )}
+
+            {selectedValue22 === 'Groups/Unions' && (
+              <div style={{ marginTop: 12, marginLeft: 24 }}>
+                <select
+                  value={selectedValue22dropgroups}
+                  onChange={(e) => setSelectedValue22dropgroups(e.target.value)}
+                  style={{ padding: 8, fontSize: 16, width: '300px' }}
+                >
+                  <option value="">Select a Group/Union</option>
+                  <option value="EU">European Union (EU)</option>
+                  <option value="AU">African Union (AU)</option>
+                  <option value="ASEAN">Association of Southeast Asian Nations (ASEAN)</option>
+                  <option value="NAFTA">North American Free Trade Agreement (NAFTA)</option>
+                  <option value="MERCOSUR">Southern Common Market (MERCOSUR)</option>
+                  <option value="G7">Group of Seven (G7)</option>
+                  <option value="G20">Group of Twenty (G20)</option>
+                  <option value="UN">United Nations (UN)</option>
+                  <option value="OPEC">Organization of Petroleum Exporting Countries (OPEC)</option>
+                  <option value="BRICS">BRICS</option>
+                  <option value="EFTA">European Free Trade Association (EFTA)</option>
+                  <option value="CARICOM">Caribbean Community (CARICOM)</option>
+                </select>
+              </div>
+            )}
           </div>
         )}
 
