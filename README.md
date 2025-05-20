@@ -9,6 +9,9 @@ This will initialize all the neo4j instances and the services that run with them
 
 Otherwise, to start them manually, from the project's main folder(modify the paths with your path):
 
+First in the root folder run:
+npm install
+
 To start the form:
 npm run dev
 
