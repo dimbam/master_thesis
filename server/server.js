@@ -109,6 +109,85 @@ app.post('/check-email', async (req, res) => {
   return res.json({ exists });
 });
 
+// Create a Data Card (stored in Neo4j DB2)
+app.post('/create-datacard', async (req, res) => {
+  const {
+    dataset_id,
+    title,
+    description,
+    creator,
+    source,
+    purpose,
+    intended_use,
+    license,
+    limitations,
+    gdpr_compliant,
+    anonymized,
+    risk_of_harm,
+  } = req.body;
+
+  if (!dataset_id || !title || !creator) {
+    return res.status(400).send('Missing required fields: dataset_id, title, or creator');
+  }
+
+  const session = driver2.session(); // ← using DB2
+  try {
+    await session.run(
+      `CREATE (c:DataCard {
+        dataset_id: $dataset_id,
+        title: $title,
+        description: $description,
+        creator: $creator,
+        source: $source,
+        purpose: $purpose,
+        intended_use: $intended_use,
+        license: $license,
+        limitations: $limitations,
+        gdpr_compliant: $gdpr_compliant,
+        anonymized: $anonymized,
+        risk_of_harm: $risk_of_harm,
+        last_updated: datetime()
+      })`,
+      {
+        dataset_id,
+        title,
+        description,
+        creator,
+        source,
+        purpose,
+        intended_use,
+        license,
+        limitations,
+        gdpr_compliant: Boolean(gdpr_compliant),
+        anonymized: Boolean(anonymized),
+        risk_of_harm,
+      },
+    );
+    logger.info(`Created DataCard in DB2 for ${dataset_id}`);
+    res.status(201).send('DataCard created');
+  } catch (error) {
+    logger.error('Error creating DataCard in DB2:', error);
+    res.status(500).send('Failed to create DataCard');
+  } finally {
+    await session.close();
+  }
+});
+
+// Retrieve all Data Cards from Neo4j DB2
+app.get('/datacards', async (req, res) => {
+  const session = driver2.session(); // ← using DB2
+  try {
+    const result = await session.run('MATCH (c:DataCard) RETURN c');
+    const cards = result.records.map((record) => record.get('c').properties);
+    res.json(cards);
+  } catch (err) {
+    logger.error('Error fetching DataCards from DB2:', err);
+    res.status(500).send('Failed to fetch DataCards');
+  } finally {
+    await session.close();
+  }
+});
+
 app.post('/store-string', async (req, res) => {
   const { user_string } = req.body;
   if (!user_string) return res.status(400).send('No string provided');

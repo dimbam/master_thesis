@@ -13,6 +13,8 @@ import Requesterform from './pages/duo-blockchain/Requester_form';
 import RequesterSearch from './pages/duo-blockchain/Requester_Dashboard';
 import FilteredForm from './pages/duo-blockchain/FilteredForm';
 import Store from './pages/Store_string';
+import CreateDataCard from './pages/createDataCard';
+import DataCardList from './pages/ViewDataCardList';
 import logo from '.././luce.png';
 
 function HomePage() {
@@ -77,6 +79,8 @@ function App() {
         <Route path="/requesterform" element={<Requesterform />} />
         <Route path="/requestersearch" element={<RequesterSearch />} />
         <Route path="/filteredform" element={<FilteredForm />} />
+        <Route path="/createdatacard" element={<CreateDataCard />} />
+        <Route path="/datacards" element={<DataCardList />} />
         <Route path="/store" element={<Store />} />
       </Routes>
     </BrowserRouter>
