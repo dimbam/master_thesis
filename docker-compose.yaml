@@ -34,7 +34,21 @@ services:
     volumes:
       - neo4j-db3-data:/data
 
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - '9000:9000' # S3 API
+      - '9001:9001' # MinIO Console
+    volumes:
+      - minio-data:/data
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server --console-address ":9001" /data
+
 volumes:
   neo4j-db1-data:
   neo4j-db2-data:
   neo4j-db3-data:
+  minio-data:

@@ -15,6 +15,7 @@ import FilteredForm from './pages/duo-blockchain/FilteredForm';
 import Store from './pages/Store_string';
 import CreateDataCard from './pages/createDataCard';
 import DataCardList from './pages/ViewDataCardList';
+import UploadPage from './pages/UploadFile';
 import logo from '.././luce.png';
 
 function HomePage() {
@@ -81,6 +82,7 @@ function App() {
         <Route path="/filteredform" element={<FilteredForm />} />
         <Route path="/createdatacard" element={<CreateDataCard />} />
         <Route path="/datacards" element={<DataCardList />} />
+        <Route path="/uploadfile" element={<UploadPage />} />
         <Route path="/store" element={<Store />} />
       </Routes>
     </BrowserRouter>

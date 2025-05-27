@@ -4,6 +4,8 @@ const nodemailer = require('nodemailer');
 const cors = require('cors');
 require('dotenv').config(); // Load environment variables from .env file
 const neo4j = require('neo4j-driver');
+const AWS = require('aws-sdk');
+const multer = require('multer');
 
 const logger = winston.createLogger({
   level: 'debug',
@@ -32,6 +34,24 @@ const transporter = nodemailer.createTransport({
   logger: true,
   debug: true,
 });
+
+const s3 = new AWS.S3({
+  endpoint: 'http://localhost:9000',
+  accessKeyId: 'minioadmin',
+  secretAccessKey: 'minioadmin',
+  s3ForcePathStyle: true, // Required for MinIO
+  signatureVersion: 'v4',
+});
+
+//Create automatically a bucket in MinIO
+// s3.headBucket({ Bucket: 'luce-files' }, async (err) => {
+//   if (err && err.statusCode === 404) {
+//     await s3.createBucket({ Bucket: 'luce-files' }).promise();
+//     console.log('Bucket created');
+//   }
+// });
+
+const upload = multer(); // store files in memory
 
 async function checkEmailExists(email) {
   const session = driver1.session();
@@ -226,6 +246,27 @@ app.get('/form', (req, res) => {
     }
     res.json(JSON.parse(data));
   });
+});
+
+app.post('/upload', upload.single('file'), async (req, res) => {
+  const file = req.file;
+  if (!file) return res.status(400).send('No file uploaded');
+
+  const params = {
+    Bucket: 'luce-files',
+    Key: file.originalname,
+    Body: file.buffer,
+    ContentType: file.mimetype,
+  };
+
+  try {
+    const result = await s3.upload(params).promise();
+    console.log('Upload result:', result);
+    res.status(200).send('File uploaded to MinIO');
+  } catch (err) {
+    console.error('Upload error:', err);
+    res.status(500).send('Failed to upload file');
+  }
 });
 
 const port = 5000;
