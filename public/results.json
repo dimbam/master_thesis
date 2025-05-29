@@ -1,20 +1,61 @@
 {
-  "Dataset 0000001": {
+  "Dataset 1": {
     "label": "What type of use will your data be permitted for?",
-    "type": "Dataset"
+    "type": "Dataset",
+    "match_id": "1"
   },
-  "Dataset 0000004": { "label": "No restriction", "type": "Dataset" },
-  "Dataset 0000006": { "label": "Health/Medical/Biomedical Research", "type": "Dataset" },
-  "Dataset 0000007": { "label": "Disease Specific Research", "type": "Dataset" },
-  "Dataset 0000011": { "label": "Population Origins/Ancestry Only", "type": "Dataset" },
-  "Dataset 0000012": { "label": "Research‑Specific Restrictions", "type": "Dataset" },
-  "Dataset 0000015": { "label": "No General Methods Research", "type": "Dataset" },
-  "Dataset 0000016": { "label": "Genetic Studies Only", "type": "Dataset" },
-  "Dataset 0000017": { "label": "Data Use Modifier", "type": "Dataset" },
-  "Dataset 0000018": { "label": "Commercial Use Restrictions", "type": "Dataset" },
-  "Model Card 0000015": { "label": "Results Must Be Published", "type": "Model Card" },
-  "Model Card 0000016": { "label": "Genetic Studies Only", "type": "Model Card" },
-  "Model Card 0000017": { "label": "Data Use Modifier", "type": "Model Card" },
-  "Model Card 0000018": { "label": "Commercial Use Restrictions", "type": "Model Card" },
-  "Model Card 0000019": { "label": "Results Must Be Published", "type": "Model Card" }
+  "Dataset 4": { "label": "No restriction", "type": "Dataset", "match_id": "4" },
+  "Dataset 6": {
+    "label": "Health/Medical/Biomedical Research",
+    "type": "Dataset",
+    "match_id": "dataset_6"
+  },
+  "Dataset 7": { "label": "Disease Specific Research", "type": "Dataset", "match_id": "7" },
+  "Dataset 11": {
+    "label": "Population Origins/Ancestry Only",
+    "type": "Dataset",
+    "match_id": "dataset_11"
+  },
+  "Dataset 12": {
+    "label": "Research‑Specific Restrictions",
+    "type": "Dataset",
+    "match_id": "dataset_12"
+  },
+  "Dataset 15": {
+    "label": "No General Methods Research",
+    "type": "Dataset",
+    "match_id": "dataset_15"
+  },
+  "Dataset 16": { "label": "Genetic Studies Only", "type": "Dataset", "match_id": "dataset_16" },
+  "Dataset 17": { "label": "Data Use Modifier", "type": "Dataset", "match_id": "dataset_17" },
+  "Dataset 18": {
+    "label": "Commercial Use Restrictions",
+    "type": "Dataset",
+    "match_id": "dataset_18"
+  },
+  "Model Card 15": {
+    "label": "Results Must Be Published",
+    "type": "Model Card",
+    "match_id": "modelcard_15"
+  },
+  "Model Card 16": {
+    "label": "Genetic Studies Only",
+    "type": "Model Card",
+    "match_id": "modelcard_16"
+  },
+  "Model Card 17": {
+    "label": "Data Use Modifier",
+    "type": "Model Card",
+    "match_id": "modelcard_17"
+  },
+  "Model Card 18": {
+    "label": "Commercial Use Restrictions",
+    "type": "Model Card",
+    "match_id": "modelcard_18"
+  },
+  "Model Card 19": {
+    "label": "Results Must Be Published",
+    "type": "Model Card",
+    "match_id": "modelcard_19"
+  }
 }

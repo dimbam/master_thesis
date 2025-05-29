@@ -194,15 +194,25 @@ app.post('/create-datacard', async (req, res) => {
 });
 
 // Retrieve all Data Cards from Neo4j DB2
-app.get('/datacards', async (req, res) => {
+app.get('/datacards/:dataset_id', async (req, res) => {
   const session = driver2.session(); // ← using DB2
+  const { dataset_id } = req.params;
+
   try {
-    const result = await session.run('MATCH (c:DataCard) RETURN c');
-    const cards = result.records.map((record) => record.get('c').properties);
-    res.json(cards);
+    const result = await session.run(
+      'MATCH (c:DataCard {dataset_id: $dataset_id}) RETURN c LIMIT 1',
+      { dataset_id },
+    );
+
+    if (result.records.length === 0) {
+      return res.status(404).send('DataCard not found');
+    }
+
+    const card = result.records[0].get('c').properties;
+    res.json(card);
   } catch (err) {
-    logger.error('Error fetching DataCards from DB2:', err);
-    res.status(500).send('Failed to fetch DataCards');
+    logger.error('Error fetching DataCard ${dataset_id} from DB2:', err);
+    res.status(500).send('Failed to fetch DataCard');
   } finally {
     await session.close();
   }

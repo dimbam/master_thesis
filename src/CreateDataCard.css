@@ -1,4 +1,149 @@
-.modelcardform {
-  font-family: sans-serif;
+.main_dashboard-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 1.5rem 2rem;
+  background-color: white;
+  z-index: 1000;
+  border-bottom: 1px solid #ccc;
+  height: 4.5rem;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.requester-dashboard-wrapper {
+  background-color: white;
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.filter-buttons-container {
+  display: flex;
+  margin-top: 1rem;
+  margin-right: 5rem;
+}
+
+.button-row {
+  display: flex;
+  align-items: center; /* <-- This vertically centers the slash */
+  gap: 0.5rem;
+}
+
+.splitline {
+  font-size: 2rem;
+  font-weight: bold;
   color: black;
+  margin: 0 0.5rem;
+  line-height: 1;
+  margin-right: 1rem;
+}
+
+.main_dashboard_title {
+  color: black;
+  margin-left: -5rem;
+}
+
+.dashboard-back-button {
+  padding: 0.5rem 1rem;
+  background-color: #000000;
+  color: rgb(255, 255, 255);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 1rem;
+}
+
+.dashboard-main-buttons-container {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+  background-color: white !important;
+}
+
+.dashboard-main-button {
+  padding: 0.75rem 1.5rem;
+  background-color: #000000;
+  border: 1px solid #ffffff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.dashboard-main-button:hover {
+  background-color: #505050;
+}
+
+.search-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 6rem;
+  background-color: white;
+  min-height: 100vh;
+  width: 100%;
+}
+
+input,
+textarea {
+  margin-top: 10px;
+  display: block; /* forces new line */
+  margin-left: 2px; /* 2px gap from left */
+  margin-bottom: 12px; /* space below each input */
+  width: 50vw;
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  color: black;
+  box-sizing: border-box; /* ensures width includes padding */
+}
+
+input[type='checkbox'] {
+  width: 16px; /* standard size */
+  height: 16px;
+  margin-right: 6px; /* space between checkbox and label text */
+  vertical-align: middle; /* align with label text */
+  cursor: pointer;
+}
+
+label {
+  display: flex;
+  align-items: center;
+  gap: 4px; /* space between checkbox and label text */
+  margin-bottom: 12px; /* space below each checkbox */
+  color: black;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.card {
+  margin-top: 5rem;
+  padding: 18px;
+  font-size: 16px;
+  width: 30vw;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: rgb(203, 203, 203);
+  color: black;
+  box-sizing: border-box;
+}
+
+.card_section {
+  padding: 4px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  color: black;
+  box-sizing: border-box;
 }

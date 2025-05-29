@@ -104,6 +104,12 @@ const RequesterSearch: React.FC = () => {
                     <span className="result-text">
                       <strong>{item.id}</strong>: {item.label}
                     </span>
+                    <button
+                      onClick={() => navigate(`/datacards/${encodeURIComponent(item.match_id)}`)} //passing id in url
+                      className="open-data-card-button"
+                    >
+                      Open Data Card
+                    </button>
                     <button onClick={() => navigate('/filteredform')} className="open-form-button">
                       Open Form
                     </button>

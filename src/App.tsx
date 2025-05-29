@@ -6,8 +6,6 @@ import Register from './pages/Register';
 import Register_waitpage from './pages/Register_waitpage';
 import LoginSuccess from './pages/Login_success';
 import MainDashboard from './pages/Main_Dashboard';
-import DatasetDashboard from './pages/Dataset_Dashboard';
-import ModelcardDashboard from './pages/ModelcardDashboard';
 import CreateDataset from './pages/duo-blockchain/CreateDataset';
 import Requesterform from './pages/duo-blockchain/Requester_form';
 import RequesterSearch from './pages/duo-blockchain/Requester_Dashboard';
@@ -74,14 +72,12 @@ function App() {
         <Route path="/registerwait" element={<Register_waitpage />} />
         <Route path="/loginsuccess" element={<LoginSuccess />} />
         <Route path="/maindashboard" element={<MainDashboard />} />
-        <Route path="/datasetdashboard" element={<DatasetDashboard />} />
-        <Route path="/modelcarddashboard" element={<ModelcardDashboard />} />
         <Route path="/createDataset" element={<CreateDataset />} />
         <Route path="/requesterform" element={<Requesterform />} />
         <Route path="/requestersearch" element={<RequesterSearch />} />
         <Route path="/filteredform" element={<FilteredForm />} />
         <Route path="/createdatacard" element={<CreateDataCard />} />
-        <Route path="/datacards" element={<DataCardList />} />
+        <Route path="/datacards/:dataset_id" element={<DataCardList />} />
         <Route path="/uploadfile" element={<UploadPage />} />
         <Route path="/store" element={<Store />} />
       </Routes>
