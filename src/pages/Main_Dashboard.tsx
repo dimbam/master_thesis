@@ -25,6 +25,7 @@ const MainDashboard: React.FC = () => {
           <span className="dashboard-main-button">Provider</span>
           <div className="dropdown-content">
             <div onClick={() => navigate('/createDataset')}>Create Dataset Form</div>
+            <div onClick={() => navigate('/createform')}>Create Dataset Form (Updated)</div>
             <div onClick={() => navigate('/createdatacard')}>Create Data Card</div>
             <div onClick={() => navigate('/uploadfile')}>Upload File</div>
           </div>

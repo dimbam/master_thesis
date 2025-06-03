@@ -1,8 +1,9 @@
 import React, { useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const UploadPage: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
+  const navigate = useNavigate();
   const handleFileSelect = () => {
     fileInputRef.current?.click();
   };
@@ -33,6 +34,18 @@ const UploadPage: React.FC = () => {
 
   return (
     <div style={{ padding: 32 }}>
+      <div className="main_dashboard-header">
+        <h1 className="main_dashboard_title">Dashboard</h1>
+        <div className="button-row">
+          <button onClick={() => navigate('/maindashboard')} className="dashboard-back-button">
+            Back
+          </button>
+          <span className="splitline">/</span>
+          <button onClick={() => navigate('/')} className="dashboard-back-button">
+            Logout
+          </button>
+        </div>
+      </div>
       <button onClick={handleFileSelect}>Upload to MinIO</button>
       <input
         ref={fileInputRef}
