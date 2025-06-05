@@ -182,7 +182,7 @@
 
 .open-form-button {
   flex-shrink: 0;
-  width: 120px; /* fixed width */
+  width: 140px; /* fixed width */
   height: 36px; /* optional fixed height */
   background-color: #000000;
   color: white;
@@ -208,6 +208,9 @@
 }
 
 .open-form-button:hover {
+  background-color: #444;
+}
+.open-data-card-button:hover {
   background-color: #444;
 }
 

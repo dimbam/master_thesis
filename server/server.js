@@ -141,8 +141,6 @@ app.post('/create-datacard', async (req, res) => {
     intended_use,
     license,
     limitations,
-    gdpr_compliant,
-    anonymized,
     risk_of_harm,
   } = req.body;
 
@@ -163,8 +161,6 @@ app.post('/create-datacard', async (req, res) => {
         intended_use: $intended_use,
         license: $license,
         limitations: $limitations,
-        gdpr_compliant: $gdpr_compliant,
-        anonymized: $anonymized,
         risk_of_harm: $risk_of_harm,
         last_updated: datetime()
       })`,
@@ -178,8 +174,6 @@ app.post('/create-datacard', async (req, res) => {
         intended_use,
         license,
         limitations,
-        gdpr_compliant: Boolean(gdpr_compliant),
-        anonymized: Boolean(anonymized),
         risk_of_harm,
       },
     );

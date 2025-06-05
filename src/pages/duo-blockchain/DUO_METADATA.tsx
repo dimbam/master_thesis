@@ -42,14 +42,14 @@ export const DUO_METADATA: Record<string, DuoMeta> = {
     label: 'health/medical/biomedical research',
     definition: 'Use allowed for health, medical, or biomedical research purposes only.',
     altLabel: 'HMB',
-    subclassOf: 'DUO:0000042',
+    subclassOf: 'DUO:0000001',
     requiredFields: ['purpose'],
   },
   'DUO:0000007': {
     label: 'disease specific research',
     definition: 'Use allowed only for the specified disease. Requires a MONDO disease identifier.',
     altLabel: 'DS',
-    subclassOf: 'DUO:0000006',
+    subclassOf: 'DUO:0000001',
     comments: [
       'This term should be coupled with a term describing a disease from an ontology to specify the disease the restriction applies to. DUO recommends MONDO be used. Other resources (Disease Ontology, HPO, SNOMED‑CT) can be used but may require mapping.',
     ],

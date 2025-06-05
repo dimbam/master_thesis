@@ -14,8 +14,6 @@ const CreateDataCard = () => {
     intended_use: '',
     license: '',
     limitations: '',
-    gdpr_compliant: false,
-    anonymized: false,
     risk_of_harm: '',
   });
 
@@ -124,26 +122,6 @@ const CreateDataCard = () => {
             value={form.risk_of_harm}
             onChange={handleChange}
           />
-
-          <label>
-            <input
-              type="checkbox"
-              name="gdpr_compliant"
-              checked={form.gdpr_compliant}
-              onChange={handleChange}
-            />
-            GDPR Compliant
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              name="anonymized"
-              checked={form.anonymized}
-              onChange={handleChange}
-            />
-            Anonymized
-          </label>
-
           <div className="dashboard-main-buttons-container">
             <button type="submit" className="dashboard-main-button">
               Submit

@@ -165,16 +165,16 @@ export default function CreateForm() {
     const isExpanded = expanded[code];
 
     return (
-      <div key={code} style={{ marginLeft: 16, marginBottom: 8 }}>
+      <div key={code} style={{ marginLeft: 16, marginBottom: 8, marginTop: 4 }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          {children.length > 0 && (
+          {/* {children.length > 0 && (
             <span
               style={{ cursor: 'pointer', fontWeight: 'bold', marginRight: 6 }}
               onClick={() => setExpanded((e) => ({ ...e, [code]: !e[code] }))}
             >
               {isExpanded ? '[-]' : '[+]'}
             </span>
-          )}
+          )} */}
           <label style={{ display: 'flex', alignItems: 'center' }}>
             {children.length === 0 && (
               <input
@@ -1110,13 +1110,15 @@ export default function CreateForm() {
                 >
                   Next
                 </button>
-                <button
-                  style={{ marginLeft: 8 }}
-                  className="button_col"
-                  onClick={() => setCurrentMainIndex((i) => i + 1)}
-                >
-                  Skip
-                </button>
+                {currentMainIndex >= 1 && (
+                  <button
+                    style={{ marginLeft: 8 }}
+                    className="button_col"
+                    onClick={() => setCurrentMainIndex((i) => i + 1)}
+                  >
+                    Skip
+                  </button>
+                )}
                 {currentMainIndex >= 1 && (
                   <button
                     style={{ marginLeft: 8 }}

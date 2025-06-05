@@ -111,7 +111,7 @@ const RequesterSearch: React.FC = () => {
                       Open Data Card
                     </button>
                     <button onClick={() => navigate('/filteredform')} className="open-form-button">
-                      Open Form
+                      Request Access
                     </button>
                   </div>
                 </li>

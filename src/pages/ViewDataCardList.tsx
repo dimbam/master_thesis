@@ -71,12 +71,6 @@ const DataCardList = () => {
             <strong>Limitations:</strong> {card.limitations}
           </p>
           <p>
-            <strong>GDPR Compliant:</strong> {card.gdpr_compliant ? 'Yes' : 'No'}
-          </p>
-          <p>
-            <strong>Anonymized:</strong> {card.anonymized ? 'Yes' : 'No'}
-          </p>
-          <p>
             <strong>Risk of Harm:</strong> {card.risk_of_harm}
           </p>
         </div>
