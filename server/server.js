@@ -144,7 +144,7 @@ app.post('/create-datacard', async (req, res) => {
     risk_of_harm,
   } = req.body;
 
-  if (!dataset_id || !title || !creator) {
+  if (!dataset_id || !title || !creator || !license) {
     return res.status(400).send('Missing required fields: dataset_id, title, or creator');
   }
 

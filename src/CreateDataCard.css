@@ -93,7 +93,8 @@
 }
 
 input,
-textarea {
+textarea,
+select {
   margin-top: 10px;
   display: block; /* forces new line */
   margin-left: 2px; /* 2px gap from left */
