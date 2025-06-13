@@ -43,13 +43,14 @@ const s3 = new AWS.S3({
   signatureVersion: 'v4',
 });
 
-//Create automatically a bucket in MinIO
-// s3.headBucket({ Bucket: 'luce-files' }, async (err) => {
-//   if (err && err.statusCode === 404) {
-//     await s3.createBucket({ Bucket: 'luce-files' }).promise();
-//     console.log('Bucket created');
-//   }
-// });
+s3.headBucket({ Bucket: 'luce-files' }, async (err) => {
+  if (err && err.statusCode === 404) {
+    await s3.createBucket({ Bucket: 'luce-files' }).promise();
+    console.log('Bucket luce-files created');
+  } else {
+    console.log('Bucket luce-files already exists');
+  }
+});
 
 const upload = multer(); // store files in memory
 
@@ -242,7 +243,7 @@ const fs = require('fs');
 const path = require('path');
 
 app.get('/form', (req, res) => {
-  const filePath = path.join(__dirname, 'storage', 'form_datatest3.json');
+  const filePath = path.join(__dirname, 'storage', 'form_datatest4.json');
   fs.readFile(filePath, 'utf-8', (err, data) => {
     if (err) {
       console.error('Failed to read form_data.json:', err);
@@ -252,21 +253,55 @@ app.get('/form', (req, res) => {
   });
 });
 
+app.post('/init-user-folder', async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) return res.status(400).send('Email is required');
+
+  const basePath = `${email}/`;
+  const subfolders = ['form/', 'dataset/', 'data_card/'];
+
+  try {
+    await Promise.all(
+      subfolders.map((folder) =>
+        s3
+          .putObject({
+            Bucket: 'luce-files',
+            Key: `${basePath}${folder}`,
+            Body: '',
+          })
+          .promise(),
+      ),
+    );
+    console.log(`Created folder structure for ${email}`);
+    res.status(200).send(`Folders created for ${email}`);
+  } catch (error) {
+    console.error('Error creating folders:', error);
+    res.status(500).send('Failed to create user folders');
+  }
+});
+
 app.post('/upload', upload.single('file'), async (req, res) => {
+  const { email } = req.body;
   const file = req.file;
+
+  if (!email) return res.status(400).send('Email is required');
   if (!file) return res.status(400).send('No file uploaded');
+
+  const keyPath = `${email}/dataset/${file.originalname}`;
 
   const params = {
     Bucket: 'luce-files',
-    Key: file.originalname,
+    Key: keyPath,
     Body: file.buffer,
     ContentType: file.mimetype,
   };
 
   try {
     const result = await s3.upload(params).promise();
+    console.log(`Uploaded ${file.originalname} to ${keyPath}`);
     console.log('Upload result:', result);
-    res.status(200).send('File uploaded to MinIO');
+    res.status(200).send(`File uploaded to ${keyPath}`);
   } catch (err) {
     console.error('Upload error:', err);
     res.status(500).send('Failed to upload file');

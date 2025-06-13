@@ -136,13 +136,9 @@ export default function CreateForm() {
   }
 
   const saveJson = () => {
-    const isNoRestriction = selected['DUO:0000004'];
-
-    const filteredSelected = isNoRestriction ? { 'DUO:0000004': true } : selected;
-
     const formData = {
-      name: isNoRestriction ? '' : name,
-      selected: filteredSelected,
+      name,
+      selected,
     };
 
     const jsonBlob = new Blob([JSON.stringify(formData, null, 2)], { type: 'application/json' });

@@ -47,7 +47,7 @@ const RequesterSearch: React.FC = () => {
         <div className="main_dashboard-header">
           <h1 className="main_dashboard_title">Requester Dashboard</h1>
           <div className="filter-buttons-container">
-            <button
+            {/* <button
               onClick={() => navigate('/requesterform')}
               className="filter-button dataset-button"
             >
@@ -58,7 +58,7 @@ const RequesterSearch: React.FC = () => {
               className="filter-button modelcard-button"
             >
               Model Card
-            </button>
+            </button> */}
           </div>
           <div className="button-row">
             <button onClick={() => navigate('/maindashboard')} className="dashboard-back-button">

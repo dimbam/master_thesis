@@ -16,7 +16,23 @@ const Login: React.FC = () => {
 
     const exists = await checkEmail(email);
     if (exists) {
+      localStorage.setItem('email', email);
       console.log('Email exists');
+
+      try {
+        const res = await fetch('http://localhost:5000/init-user-folder', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+
+        if (!res.ok) {
+          console.error('Failed to initialize user folders');
+          alert('Warning: user folders not initialized');
+        }
+      } catch (err) {
+        console.error('Error calling init-user-folder:', err);
+      }
       navigate('/maindashboard', { state: { email } });
     } else {
       console.log('Email not found');

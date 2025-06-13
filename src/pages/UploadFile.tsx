@@ -14,6 +14,9 @@ const UploadPage: React.FC = () => {
 
     const formData = new FormData();
     formData.append('file', file);
+    const email = localStorage.getItem('email');
+
+    formData.append('email', email);
 
     try {
       const res = await fetch('http://localhost:5000/upload', {

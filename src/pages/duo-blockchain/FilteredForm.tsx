@@ -959,19 +959,44 @@ export default function FilteredForm() {
   };
 
   return (
-    <div className="form-wrapper">
-      <div className="formlayout" style={{ padding: 24 }}>
-        <h2 className="form_title">Filtered DUO Form</h2>
-        <button className="load_button" onClick={loadRequesterForm} style={{ marginBottom: 16 }}>
-          Load Requester Form
-        </button>
-        {matchedRoots.map((rootCode: string) => renderNode(rootCode))}
-        <button className="load_button" onClick={() => navigate('/requestersearch')}>
-          Back
-        </button>
-        <button className="load_button" onClick={handleSubmit}>
-          Submit
-        </button>
+    <div>
+      <div className="main_dashboard-header">
+        <h1 className="main_dashboard_title">Access Request</h1>
+        <div className="filter-buttons-container">
+          {/* <button
+              onClick={() => navigate('/requesterform')}
+              className="filter-button dataset-button"
+            >
+              Dataset
+            </button>
+            <button
+              onClick={() => navigate('/requesterform')}
+              className="filter-button modelcard-button"
+            >
+              Model Card
+            </button> */}
+        </div>
+        <div className="button-row">
+          <button onClick={() => navigate('/maindashboard')} className="dashboard-back-button">
+            Back
+          </button>
+          <span className="splitline">/</span>
+          <button onClick={() => navigate('/')} className="dashboard-back-button">
+            Logout
+          </button>
+        </div>
+      </div>
+      <div className="form-wrapper">
+        <div className="formlayout" style={{ padding: 24 }}>
+          <h2 className="form_title">Filtered DUO Form</h2>
+          <button className="load_button" onClick={loadRequesterForm} style={{ marginBottom: 16 }}>
+            Load Requester Form
+          </button>
+          {matchedRoots.map((rootCode: string) => renderNode(rootCode))}
+          <button className="load_button" onClick={handleSubmit}>
+            Submit
+          </button>
+        </div>
       </div>
     </div>
   );

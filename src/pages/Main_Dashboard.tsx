@@ -36,7 +36,7 @@ const MainDashboard: React.FC = () => {
           <div className="dropdown-content">
             <div onClick={() => navigate('/requesterform')}>View Requester Form --old version</div>
             <div onClick={() => navigate('/requestersearch')}>Open Requester Search Page</div>
-            <div onClick={() => navigate('/datacards')}>View Data Card</div>
+            {/* <div onClick={() => navigate('/datacards')}>View Data Card</div> */}
           </div>
         </div>
       </div>
