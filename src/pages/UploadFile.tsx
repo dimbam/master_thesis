@@ -19,7 +19,7 @@ const UploadPage: React.FC = () => {
     formData.append('email', email);
 
     try {
-      const res = await fetch('http://localhost:5000/upload', {
+      const res = await fetch('http://localhost:5000/upload-dataset', {
         method: 'POST',
         body: formData,
       });

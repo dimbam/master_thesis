@@ -281,7 +281,7 @@ app.post('/init-user-folder', async (req, res) => {
   }
 });
 
-app.post('/upload', upload.single('file'), async (req, res) => {
+app.post('/upload-dataset', upload.single('file'), async (req, res) => {
   const { email } = req.body;
   const file = req.file;
 
@@ -305,6 +305,33 @@ app.post('/upload', upload.single('file'), async (req, res) => {
   } catch (err) {
     console.error('Upload error:', err);
     res.status(500).send('Failed to upload file');
+  }
+});
+
+app.post('/upload-form', upload.single('file'), async (req, res) => {
+  const { email } = req.body;
+  const file = req.file;
+
+  if (!email) return res.status(400).send('Email is required');
+  if (!file) return res.status(400).send('No file uploaded');
+
+  const keyPath = `${email}/form/${file.originalname}`;
+
+  const params = {
+    Bucket: 'luce-files',
+    Key: keyPath,
+    Body: file.buffer,
+    ContentType: file.mimetype,
+  };
+
+  try {
+    const result = await s3.upload(params).promise();
+    console.log(`Uploaded ${file.originalname} to ${keyPath}`);
+    console.log('Upload result:', result);
+    res.status(200).send(`Form uploaded to ${keyPath}`);
+  } catch (err) {
+    console.error('Upload error:', err);
+    res.status(500).send('Failed to upload form');
   }
 });
 

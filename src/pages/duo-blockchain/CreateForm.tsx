@@ -154,6 +154,38 @@ export default function CreateForm() {
     URL.revokeObjectURL(url); // Free memory
   };
 
+  const storeForm = async () => {
+    const formDataJson = {
+      name,
+      selected,
+    };
+
+    const blob = new Blob([JSON.stringify(formDataJson, null, 2)], { type: 'application/json' });
+
+    const formData = new FormData();
+    const safeName = name.trim().replace(/[^a-z0-9_\-]/gi, '_') || 'unnamed_form';
+    formData.append('file', blob, `${safeName}.json`);
+    formData.append('email', localStorage.getItem('email') || '');
+
+    try {
+      const res = await fetch('http://localhost:5000/upload-form', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (res.ok) {
+        console.log('Form uploaded successfully');
+        navigate('/createdatacard');
+      } else {
+        console.error('Form upload failed');
+        alert('Error uploading form');
+      }
+    } catch (err) {
+      console.error('Upload error:', err);
+      alert('Error uploading form');
+    }
+  };
+
   const renderNode = (code: string) => {
     const meta = DUO_METADATA[code]!;
     const children = childrenOf(code);
@@ -1130,8 +1162,9 @@ export default function CreateForm() {
                 className="button_col"
                 onClick={() => {
                   // Add validation if needed
-                  saveJson();
-                  navigate('/createdatacard');
+                  // saveJson();
+                  // navigate('/createdatacard');
+                  storeForm();
                 }}
               >
                 Submit
