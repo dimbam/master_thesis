@@ -14,9 +14,12 @@ const UploadPage: React.FC = () => {
 
     const formData = new FormData();
     formData.append('file', file);
+
     const email = localStorage.getItem('email');
+    const formName = localStorage.getItem('formName') || 'datacard';
 
     formData.append('email', email);
+    formData.append('filename', formName);
 
     try {
       const res = await fetch('http://localhost:5000/upload-dataset', {

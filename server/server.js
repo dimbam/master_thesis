@@ -158,24 +158,23 @@ app.post('/create-datacard', async (req, res) => {
         description: $description,
         creator: $creator,
         source: $source,
-        purpose: $purpose,
+        publication_doi: $publication_doi,
         intended_use: $intended_use,
         license: $license,
         limitations: $limitations,
-        risk_of_harm: $risk_of_harm,
         last_updated: datetime()
       })`,
       {
-        dataset_id,
-        title,
-        description,
-        creator,
-        source,
-        purpose,
-        intended_use,
-        license,
-        limitations,
-        risk_of_harm,
+        dataset_id: '',
+        title: '',
+        description: '',
+        creator: '',
+        source: '',
+        publication_doi: '',
+        intended_use: '',
+        license: '',
+        limitations: '',
+        // risk_of_harm,
       },
     );
     logger.info(`Created DataCard in DB2 for ${dataset_id}`);
@@ -185,6 +184,56 @@ app.post('/create-datacard', async (req, res) => {
     res.status(500).send('Failed to create DataCard');
   } finally {
     await session.close();
+  }
+});
+
+app.post('/upload-datacard-minio', async (req, res) => {
+  // const {
+  //   title,
+  //   description,
+  //   creator,
+  //   source,
+  //   publication_doi,
+  //   intended_use,
+  //   license,
+  //   limitations,
+  // } = req.body;
+
+  // const { email } = req.body;
+
+  // const datacard = {
+  //   title,
+  //   description,
+  //   creator,
+  //   source,
+  //   publication_doi,
+  //   intended_use,
+  //   license,
+  //   limitations,
+  // };
+
+  const { filename = 'datacard.json', email, ...datacard } = req.body;
+
+  if (!email) return res.status(400).send('Missing the user email');
+
+  const key = `${email}/data-card/${filename}`;
+  const fileBuffer = Buffer.from(JSON.stringify(datacard, null, 2));
+
+  try {
+    await s3
+      .upload({
+        Bucket: 'luce-files',
+        Key: key,
+        Body: fileBuffer,
+        ContentType: 'application/json',
+      })
+      .promise();
+
+    console.log(`Uploaded datacard to ${key}`);
+    res.status(200).send('Data card uploaded');
+  } catch (err) {
+    console.error('MinIO upload error:', err);
+    res.status(500).send('Failed to upload data card');
   }
 });
 
@@ -259,7 +308,7 @@ app.post('/init-user-folder', async (req, res) => {
   if (!email) return res.status(400).send('Email is required');
 
   const basePath = `${email}/`;
-  const subfolders = ['form/', 'dataset/', 'data_card/'];
+  const subfolders = ['form/', 'dataset/', 'data-card/'];
 
   try {
     await Promise.all(
@@ -282,13 +331,13 @@ app.post('/init-user-folder', async (req, res) => {
 });
 
 app.post('/upload-dataset', upload.single('file'), async (req, res) => {
-  const { email } = req.body;
+  const { email, filename } = req.body;
   const file = req.file;
 
   if (!email) return res.status(400).send('Email is required');
   if (!file) return res.status(400).send('No file uploaded');
 
-  const keyPath = `${email}/dataset/${file.originalname}`;
+  const keyPath = `${email}/dataset/${filename}`;
 
   const params = {
     Bucket: 'luce-files',

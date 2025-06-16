@@ -10,11 +10,11 @@ const CreateDataCard = () => {
     description: '',
     creator: '',
     source: '',
-    purpose: '',
+    publication_doi: '',
     intended_use: '',
     license: '',
     limitations: '',
-    risk_of_harm: '',
+    // risk_of_harm: '',
   });
 
   const handleChange = (
@@ -29,6 +29,9 @@ const CreateDataCard = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    const email = localStorage.getItem('email');
+    const formName = localStorage.getItem('formName') || 'datacard';
+
     e.preventDefault();
     console.log(form);
 
@@ -41,11 +44,26 @@ const CreateDataCard = () => {
 
       alert(res.ok ? 'Created!' : 'Error');
       if (res.ok) {
-        navigate('/maindashboard');
+        navigate('/uploadfile');
       }
     } catch (err) {
       alert('Connection error');
       console.error(err);
+    }
+
+    const safeName = formName.trim().replace(/[^a-z0-9_\-]/gi, '_') || 'datacard';
+
+    try {
+      const res = await fetch('http://localhost:5000/upload-datacard-minio', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...form, email, filename: `${safeName}.json` }),
+      });
+
+      if (!res.ok) throw new Error('Failed to upload Data Card');
+    } catch (err) {
+      console.error('Submit error:', err);
+      alert('Something went wrong');
     }
   };
 
@@ -96,9 +114,9 @@ const CreateDataCard = () => {
           />
           <input name="source" placeholder="Source" value={form.source} onChange={handleChange} />
           <input
-            name="purpose"
-            placeholder="Purpose"
-            value={form.purpose}
+            name="publication_doi"
+            placeholder="Publication DOI"
+            value={form.publication_doi}
             onChange={handleChange}
           />
           <input
@@ -128,12 +146,12 @@ const CreateDataCard = () => {
             value={form.limitations}
             onChange={handleChange}
           />
-          <input
+          {/* <input
             name="risk_of_harm"
             placeholder="Risk of Harm"
             value={form.risk_of_harm}
             onChange={handleChange}
-          />
+          /> */}
           <div className="dashboard-main-buttons-container">
             <button type="submit" className="dashboard-main-button">
               Submit

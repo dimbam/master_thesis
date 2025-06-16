@@ -160,6 +160,8 @@ export default function CreateForm() {
       selected,
     };
 
+    localStorage.setItem('formName', name);
+
     const blob = new Blob([JSON.stringify(formDataJson, null, 2)], { type: 'application/json' });
 
     const formData = new FormData();
