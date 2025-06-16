@@ -384,6 +384,96 @@ app.post('/upload-form', upload.single('file'), async (req, res) => {
   }
 });
 
+const { gql, request } = require('graphql-request');
+
+app.get('/all-user-datasets', async (req, res) => {
+  try {
+    const endpoint = 'http://localhost:4000/';
+    const query = gql`
+      query {
+        users {
+          email
+        }
+      }
+    `;
+    const data = await request(endpoint, query);
+    const emails = data.users.map((u) => u.email);
+
+    const results = [];
+
+    for (const email of emails) {
+      const prefix = `${email}/dataset/`;
+
+      const listed = await s3.listObjectsV2({ Bucket: 'luce-files', Prefix: prefix }).promise();
+
+      const files = (listed.Contents || []).map((file) => ({
+        email,
+        filename: file.Key.replace(prefix, ''),
+        fullPath: file.Key,
+        size: file.Size,
+        lastModified: file.LastModified,
+      }));
+      results.push(...files);
+    }
+
+    res.json(results);
+  } catch (err) {
+    console.error('Error fetching datasets: ', err);
+    res.status(500).send('Error retrieving datasets');
+  }
+});
+
+app.get('/get-datacard', async (req, res) => {
+  const { path } = req.query;
+  if (!path) return res.status(400).send('Missing required path parameter');
+
+  const params = {
+    Bucket: 'luce-files',
+    Prefix: path,
+  };
+
+  try {
+    const listed = await s3.listObjectsV2(params).promise();
+    if (!listed.Contents || listed.Contents.length === 0) {
+      return res.status(404).send('No files found in that folder');
+    }
+
+    const files = await Promise.all(
+      listed.Contents.map(async (obj) => {
+        const fileData = await s3.getObject({ Bucket: 'luce-files', Key: obj.Key }).promise();
+        const rawContent = fileData.Body.toString('utf-8').trim();
+
+        // Skip empty files
+        if (!rawContent) return null;
+
+        let parsed;
+        try {
+          parsed = JSON.parse(rawContent);
+        } catch (err) {
+          console.warn(`Skipping non-JSON file: ${obj.Key}`);
+          return null;
+        }
+
+        return {
+          filename: obj.Key.replace(path, ''),
+          fullPath: obj.Key,
+          content: parsed,
+        };
+      }),
+    );
+
+    const validFiles = files.filter(Boolean); // remove nulls
+    if (validFiles.length === 0) {
+      return res.status(404).send('No valid JSON files found in folder');
+    }
+
+    res.status(200).json(validFiles);
+  } catch (err) {
+    console.error('Error retrieving folder contents:', err);
+    res.status(500).send('Failed to retrieve folder contents');
+  }
+});
+
 const port = 5000;
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
