@@ -148,3 +148,31 @@ label {
   color: black;
   box-sizing: border-box;
 }
+
+.card {
+  margin-top: 5rem;
+  padding: 1.5rem;
+  font-size: 16px;
+  width: 90%;
+  max-width: 1200px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f3f3f3;
+  color: black;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.datacard-section,
+.metadata-section {
+  margin-bottom: 1.5rem;
+  max-width: 100%;
+}
+
+.wrapped-text {
+  display: inline-block;
+  max-width: 100%;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}

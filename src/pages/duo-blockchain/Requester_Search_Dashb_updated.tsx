@@ -28,16 +28,23 @@ const RequesterSearchDashbUpd: React.FC = () => {
   };
 
   const fetchDataCard = async (datasetPath: string) => {
-    const emailPrefix = datasetPath.split('/')[0];
-    const folderPath = `${emailPrefix}/data-card/`;
+    const dataCardPath = datasetPath.replace('/dataset/', '/data-card/').replace(/\.csv$/, '.json');
+
+    // const emailPrefix = datasetPath.split('/')[0];
+    // const folderPath = `${emailPrefix}/data-card/`;
 
     try {
-      const res = await fetch(
-        `http://localhost:5000/get-datacard?path=${encodeURIComponent(folderPath)}`,
-      );
-      if (!res.ok) throw new Error('Failed to fetch Data Card');
-      const data = await res.json();
-      console.log('Data card:', data);
+      const [cardRes, metaRes] = await Promise.all([
+        fetch(`http://localhost:5000/get-datacard?path=${encodeURIComponent(dataCardPath)}`),
+        fetch(`http://localhost:5000/extract-metadata?path=${encodeURIComponent(datasetPath)}`),
+      ]);
+      if (!cardRes.ok || !metaRes.ok) throw new Error('Failed to fetch Data Card or Metadata');
+      const cardData = await cardRes.json();
+      const metadata = await metaRes.json();
+
+      console.log('Data card:', cardData);
+
+      navigate('/datacardviewrequestaccess', { state: { datacard: cardData, metadata } });
     } catch (err) {
       console.error('Fetch error:', err);
     }

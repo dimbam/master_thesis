@@ -12,7 +12,6 @@ const CreateDataCard = () => {
     source: '',
     publication_doi: '',
     intended_use: '',
-    license: '',
     limitations: '',
     // risk_of_harm: '',
   });
@@ -125,21 +124,6 @@ const CreateDataCard = () => {
             value={form.intended_use}
             onChange={handleChange}
           />
-          <select name="license" value={form.license} onChange={handleChange}>
-            <option value="">Select License</option>
-            <option value="CC0-1.0">CC0 1.0 (Public Domain)</option>
-            <option value="CC-BY-4.0">CC BY 4.0 (Attribution)</option>
-            <option value="CC-BY-SA-4.0">CC BY-SA 4.0 (ShareAlike)</option>
-            <option value="CC-BY-NC-4.0">CC BY-NC 4.0 (NonCommercial)</option>
-            <option value="CC-BY-ND-4.0">CC BY-ND 4.0 (NoDerivs)</option>
-            <option value="ODbL">ODbL (Open Database License)</option>
-            <option value="ODC-By">ODC-By (Open Data Commons Attribution)</option>
-            <option value="PDDL">PDDL (Public Domain Dedication & License)</option>
-            <option value="GPL-3.0">GNU GPL v3</option>
-            <option value="Apache-2.0">Apache License 2.0</option>
-            <option value="MIT">MIT License</option>
-            <option value="Proprietary">Proprietary/Other</option>
-          </select>
           <input
             name="limitations"
             placeholder="Limitations"

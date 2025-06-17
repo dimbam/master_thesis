@@ -6,6 +6,8 @@ require('dotenv').config(); // Load environment variables from .env file
 const neo4j = require('neo4j-driver');
 const AWS = require('aws-sdk');
 const multer = require('multer');
+const stream = require('stream');
+const csv = require('csv-parser');
 
 const logger = winston.createLogger({
   level: 'debug',
@@ -140,12 +142,12 @@ app.post('/create-datacard', async (req, res) => {
     source,
     purpose,
     intended_use,
-    license,
+    // license,
     limitations,
     risk_of_harm,
   } = req.body;
 
-  if (!dataset_id || !title || !creator || !license) {
+  if (!dataset_id || !title || !creator) {
     return res.status(400).send('Missing required fields: dataset_id, title, or creator');
   }
 
@@ -160,7 +162,6 @@ app.post('/create-datacard', async (req, res) => {
         source: $source,
         publication_doi: $publication_doi,
         intended_use: $intended_use,
-        license: $license,
         limitations: $limitations,
         last_updated: datetime()
       })`,
@@ -172,7 +173,7 @@ app.post('/create-datacard', async (req, res) => {
         source: '',
         publication_doi: '',
         intended_use: '',
-        license: '',
+        // license: '',
         limitations: '',
         // risk_of_harm,
       },
@@ -457,6 +458,7 @@ app.get('/get-datacard', async (req, res) => {
         return {
           filename: obj.Key.replace(path, ''),
           fullPath: obj.Key,
+          modified: obj.LastModified,
           content: parsed,
         };
       }),
@@ -471,6 +473,42 @@ app.get('/get-datacard', async (req, res) => {
   } catch (err) {
     console.error('Error retrieving folder contents:', err);
     res.status(500).send('Failed to retrieve folder contents');
+  }
+});
+
+app.get('/extract-metadata', async (req, res) => {
+  const { path } = req.query;
+  if (!path) return res.status(400).send('Missing CSV path');
+
+  const params = {
+    Bucket: 'luce-files',
+    Key: path,
+  };
+
+  try {
+    const s3Stream = s3.getObject(params).createReadStream();
+    const rows = [];
+    let headers = [];
+
+    s3Stream
+      .pipe(csv())
+      .on('headers', (hdrs) => {
+        headers = hdrs;
+      })
+      .on('data', (data) => {
+        if (rows.length < 5) rows.push(data);
+      })
+      .on('end', () => {
+        const metadata = {
+          shape: { rows: rows.length, columns: headers.length },
+          columns: headers,
+          sample: rows,
+        };
+        res.json(metadata);
+      });
+  } catch (err) {
+    console.error('Metadata extraction error:', err);
+    res.status(500).send('Failed to extract metadata');
   }
 });
 
