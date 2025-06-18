@@ -17,6 +17,7 @@ import UploadPage from './pages/UploadFile';
 import CreateForm from './pages/duo-blockchain/CreateForm';
 import RequesterSearchDashbUpd from './pages/duo-blockchain/Requester_Search_Dashb_updated';
 import DataCardViewRequestAccess from './pages/DataCardViewRequestAccess';
+import RequestAccessForm from './pages/duo-blockchain/RequestAccessForm';
 import logo from '.././luce.png';
 
 function HomePage() {
@@ -86,6 +87,7 @@ function App() {
         <Route path="/store" element={<Store />} />
         <Route path="/datacardviewrequestaccess" element={<DataCardViewRequestAccess />} />
         <Route path="/requesterDashbUpd" element={<RequesterSearchDashbUpd />} />
+        <Route path="/requestaccessform" element={<RequestAccessForm />} />
       </Routes>
     </BrowserRouter>
   );

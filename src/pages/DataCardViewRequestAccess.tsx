@@ -27,7 +27,7 @@ const DataCardViewRequestAccess: React.FC = () => {
         </div>
 
         <div className="card">
-          <h2> Data Card</h2>
+          <h2 className="title-container"> Data Card</h2>
           {datacard.map((item: any, idx: number) => (
             <div key={idx} className="datacard-section">
               <p>
@@ -46,7 +46,6 @@ const DataCardViewRequestAccess: React.FC = () => {
             </div>
           ))}
 
-          <h2> Extracted Metadata</h2>
           <div className="metadata-section">
             {Object.entries(metadata).map(([k, v]) => (
               <p key={k}>

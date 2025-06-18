@@ -150,12 +150,11 @@ label {
 }
 
 .card {
-  margin-top: 5rem;
+  margin-top: 20rem;
   padding: 1.5rem;
   font-size: 16px;
   width: 90%;
   max-width: 1200px;
-  border: 1px solid #ccc;
   border-radius: 8px;
   background-color: #f3f3f3;
   color: black;
@@ -175,4 +174,9 @@ label {
   max-width: 100%;
   white-space: pre-wrap;
   word-wrap: break-word;
+}
+
+.title-container {
+  background-color: rgb(114, 114, 114);
+  color: black;
 }

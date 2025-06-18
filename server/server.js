@@ -134,20 +134,10 @@ app.post('/check-email', async (req, res) => {
 
 // Create a Data Card (stored in Neo4j DB2)
 app.post('/create-datacard', async (req, res) => {
-  const {
-    dataset_id,
-    title,
-    description,
-    creator,
-    source,
-    purpose,
-    intended_use,
-    // license,
-    limitations,
-    risk_of_harm,
-  } = req.body;
+  const { title, description, creator, source, publication_doi, intended_use, limitations } =
+    req.body;
 
-  if (!dataset_id || !title || !creator) {
+  if (!description || !title || !creator) {
     return res.status(400).send('Missing required fields: dataset_id, title, or creator');
   }
 
@@ -155,7 +145,6 @@ app.post('/create-datacard', async (req, res) => {
   try {
     await session.run(
       `CREATE (c:DataCard {
-        dataset_id: $dataset_id,
         title: $title,
         description: $description,
         creator: $creator,
@@ -166,19 +155,16 @@ app.post('/create-datacard', async (req, res) => {
         last_updated: datetime()
       })`,
       {
-        dataset_id: '',
         title: '',
         description: '',
         creator: '',
         source: '',
         publication_doi: '',
         intended_use: '',
-        // license: '',
         limitations: '',
-        // risk_of_harm,
       },
     );
-    logger.info(`Created DataCard in DB2 for ${dataset_id}`);
+    logger.info(`Created DataCard in DB2 for ${title}`);
     res.status(201).send('DataCard created');
   } catch (error) {
     logger.error('Error creating DataCard in DB2:', error);
@@ -496,19 +482,106 @@ app.get('/extract-metadata', async (req, res) => {
         headers = hdrs;
       })
       .on('data', (data) => {
-        if (rows.length < 5) rows.push(data);
+        rows.push(data);
       })
       .on('end', () => {
+        const columnTypes = {};
+        const missingValues = {};
+        const uniqueValues = {};
+        const numericSummary = {};
+
+        headers.forEach((col) => {
+          const values = rows.map((r) => r[col]).filter((v) => v !== undefined && v !== '');
+          const numericValues = values.map((v) => parseFloat(v)).filter((v) => !isNaN(v));
+
+          if (numericValues.length / values.length > 0.9) {
+            columnTypes[col] = 'numeric';
+          } else if (values.every((v) => !isNaN(Date.parse(v)))) {
+            columnTypes[col] = 'date';
+          } else {
+            columnTypes[col] = 'categorical';
+          }
+
+          missingValues[col] = rows.filter((r) => !r[col] || r[col].trim() === '').length;
+          uniqueValues[col] = new Set(values).size;
+
+          if (columnTypes[col] === 'numeric' && numericValues.length > 0) {
+            const sum = numericValues.reduce((a, b) => a + b, 0);
+            numericSummary[col] = {
+              min: numericValues.reduce((a, b) => Math.min(a, b), Infinity),
+              max: numericValues.reduce((a, b) => Math.max(a, b), -Infinity),
+              mean: +(sum / numericValues.length).toFixed(2),
+            };
+          }
+        });
+
         const metadata = {
           shape: { rows: rows.length, columns: headers.length },
-          columns: headers,
-          sample: rows,
+          total_records: rows.length,
+          attributes: headers,
+          n_of_missing_values_per_column: missingValues,
+          unique_values: uniqueValues,
+          columnTypes: columnTypes,
+          numeric_summary: numericSummary,
+          sample: rows.slice(0, 3),
         };
         res.json(metadata);
       });
   } catch (err) {
     console.error('Metadata extraction error:', err);
     res.status(500).send('Failed to extract metadata');
+  }
+});
+
+app.get('/get-form', async (req, res) => {
+  const { path } = req.query;
+  if (!path) return res.status(400).send('Missing required path parameter');
+
+  const params = {
+    Bucket: 'luce-files',
+    Prefix: path,
+  };
+
+  try {
+    const listed = await s3.listObjectsV2(params).promise();
+    if (!listed.Contents || listed.Contents.length === 0) {
+      return res.status(404).send('No files found in that folder');
+    }
+
+    const files = await Promise.all(
+      listed.Contents.map(async (obj) => {
+        const fileData = await s3.getObject({ Bucket: 'luce-files', Key: obj.Key }).promise();
+        const rawContent = fileData.Body.toString('utf-8').trim();
+
+        // Skip empty files
+        if (!rawContent) return null;
+
+        let parsed;
+        try {
+          parsed = JSON.parse(rawContent);
+        } catch (err) {
+          console.warn(`Skipping non-JSON file: ${obj.Key}`);
+          return null;
+        }
+
+        return {
+          filename: obj.Key.replace(path, ''),
+          fullPath: obj.Key,
+          modified: obj.LastModified,
+          content: parsed,
+        };
+      }),
+    );
+
+    const validFiles = files.filter(Boolean); // remove nulls
+    if (validFiles.length === 0) {
+      return res.status(404).send('No valid JSON files found in folder');
+    }
+
+    res.status(200).json(validFiles);
+  } catch (err) {
+    console.error('Error retrieving folder contents:', err);
+    res.status(500).send('Failed to retrieve folder contents');
   }
 });
 

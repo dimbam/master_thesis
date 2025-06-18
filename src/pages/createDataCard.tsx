@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 const CreateDataCard = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({
-    dataset_id: '',
+    // dataset_id: '',
     title: '',
     description: '',
     creator: '',
@@ -84,14 +84,14 @@ const CreateDataCard = () => {
         </div>
 
         <form onSubmit={handleSubmit}>
-          <input
+          {/* <input
             name="dataset_id"
             placeholder="ID"
             value={form.dataset_id}
             onChange={handleChange}
             required
             style={{ marginTop: '20%' }}
-          />
+          /> */}
           <input
             name="title"
             placeholder="Title"

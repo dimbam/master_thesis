@@ -50,6 +50,24 @@ const RequesterSearchDashbUpd: React.FC = () => {
     }
   };
 
+  const fetchForm = async (datasetPath: string) => {
+    const dataCardPath = datasetPath.replace('/dataset/', '/form/').replace(/\.csv$/, '.json');
+
+    try {
+      const formres = await fetch(
+        `http://localhost:5000/get-form?path=${encodeURIComponent(dataCardPath)}`,
+      );
+      if (!formres.ok) throw new Error('Failed to fetch Form');
+      const formData = await formres.json();
+
+      console.log('Request Access Form card:', formData);
+
+      navigate('/requestaccessform', { state: { formData: formData } });
+    } catch (err) {
+      console.error('Fetch error:', err);
+    }
+  };
+
   const handleClearSearch = () => {
     setsearchValue('');
     setFiles([]);
@@ -117,6 +135,12 @@ const RequesterSearchDashbUpd: React.FC = () => {
                       className="open-data-card-button"
                     >
                       Open Data Card
+                    </button>
+                    <button
+                      onClick={() => fetchForm(file.fullPath)}
+                      className="open-data-card-button"
+                    >
+                      Request Access
                     </button>
                   </div>
                 </li>
