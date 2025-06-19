@@ -34,6 +34,7 @@ const CreateDataCard = () => {
     e.preventDefault();
     console.log(form);
 
+    // this is for creating the data card in neo4j
     try {
       const res = await fetch('http://localhost:5000/create-datacard', {
         method: 'POST',
@@ -51,6 +52,8 @@ const CreateDataCard = () => {
     }
 
     const safeName = formName.trim().replace(/[^a-z0-9_\-]/gi, '_') || 'datacard';
+
+    //this is for creating the data card in minIO
 
     try {
       const res = await fetch('http://localhost:5000/upload-datacard-minio', {

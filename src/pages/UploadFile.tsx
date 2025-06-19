@@ -19,6 +19,7 @@ const UploadPage: React.FC = () => {
     const formName = localStorage.getItem('formName') || 'datacard';
 
     formData.append('email', email);
+    // The uploaded file doesn't get a .json or .csv in the name setting so it only takes the name passed initially in the CreateForm page
     formData.append('filename', formName);
 
     try {
@@ -27,21 +28,34 @@ const UploadPage: React.FC = () => {
         body: formData,
       });
 
-      if (res.ok) {
-        alert('Upload successful!');
-      } else {
-        alert('Upload failed.');
-      }
+      if (!res.ok) throw new Error('Upload failed');
+
+      alert('Upload successful!');
+
+      const datasetPath = `${email}/dataset/${formName}`;
+      const dataCardPath = `${email}/data-card/${formName}.json`;
+
+      const [cardRes, metaRes] = await Promise.all([
+        fetch(`http://localhost:5000/get-datacard?path=${encodeURIComponent(dataCardPath)}`),
+        fetch(`http://localhost:5000/extract-metadata?path=${encodeURIComponent(datasetPath)}`),
+      ]);
+
+      if (!cardRes.ok || !metaRes.ok) throw new Error('Failed to fetch metadata or datacard');
+
+      const cardData = await cardRes.json();
+      const metadata = await metaRes.json();
+
+      navigate('/editdatacard', { state: { datacard: cardData, metadata } });
     } catch (err) {
-      console.error('Upload error: ', err);
-      alert('Error uploading file');
+      console.error('Upload or fetch error: ', err);
+      alert('Error opening data card');
     }
   };
 
   return (
     <div style={{ padding: 32 }}>
       <div className="main_dashboard-header">
-        <h1 className="main_dashboard_title">Dashboard</h1>
+        <h1 className="main_dashboard_title">Upload File</h1>
         <div className="button-row">
           <button onClick={() => navigate('/maindashboard')} className="dashboard-back-button">
             Back

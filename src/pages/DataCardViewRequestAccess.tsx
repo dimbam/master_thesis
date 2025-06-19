@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import '.././CreateDataCard.css';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import React from 'react';
+import '.././DataCardViewRequestAccess.css';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const DataCardViewRequestAccess: React.FC = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
 
-  const { datacard, metadata } = state || {};
+  const { datacard } = state || {};
+  if (!datacard) return <div>Missing data</div>;
 
-  if (!datacard || !metadata) return <div>Missing data</div>;
+  const content = datacard[0]?.content || {};
+  const metadata = content.__metadata__ || {};
 
   return (
     <div className="requester-dashboard-wrapper">
@@ -27,25 +29,25 @@ const DataCardViewRequestAccess: React.FC = () => {
         </div>
 
         <div className="card">
-          <h2 className="title-container"> Data Card</h2>
-          {datacard.map((item: any, idx: number) => (
-            <div key={idx} className="datacard-section">
-              <p>
-                <strong>Filename:</strong> {item.fullPath}
-              </p>
-              <p>
-                <strong>Last Modified:</strong>
-                {item.modified}
-              </p>
-              {Object.entries(item.content).map(([k, v]) => (
+          <h2 className="title-container">Data Card</h2>
+          <div className="datacard-section">
+            <p>
+              <strong>Filename:</strong> {datacard[0].fullPath}
+            </p>
+            <p>
+              <strong>Last Modified:</strong> {datacard[0].modified}
+            </p>
+            {Object.entries(content)
+              .filter(([k]) => k !== '__metadata__')
+              .map(([k, v]) => (
                 <p key={k}>
                   <strong>{k}:</strong> {String(v)}
                 </p>
               ))}
-              <hr />
-            </div>
-          ))}
+            <hr />
+          </div>
 
+          <h3 className="title-container">Extracted Metadata</h3>
           <div className="metadata-section">
             {Object.entries(metadata).map(([k, v]) => (
               <p key={k}>
