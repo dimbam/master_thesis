@@ -134,8 +134,7 @@ app.post('/check-email', async (req, res) => {
 
 // Create a Data Card (stored in Neo4j DB2)
 app.post('/create-datacard', async (req, res) => {
-  const { title, description, creator, source, publication_doi, intended_use, limitations } =
-    req.body;
+  const { title, description, creator, source } = req.body;
 
   if (!description || !title || !creator) {
     return res.status(400).send('Missing required fields: dataset_id, title, or creator');
@@ -149,9 +148,6 @@ app.post('/create-datacard', async (req, res) => {
         description: $description,
         creator: $creator,
         source: $source,
-        publication_doi: $publication_doi,
-        intended_use: $intended_use,
-        limitations: $limitations,
         last_updated: datetime()
       })`,
       {
@@ -159,9 +155,6 @@ app.post('/create-datacard', async (req, res) => {
         description: '',
         creator: '',
         source: '',
-        publication_doi: '',
-        intended_use: '',
-        limitations: '',
       },
     );
     logger.info(`Created DataCard in DB2 for ${title}`);
@@ -175,30 +168,6 @@ app.post('/create-datacard', async (req, res) => {
 });
 
 app.post('/upload-datacard-minio', async (req, res) => {
-  // const {
-  //   title,
-  //   description,
-  //   creator,
-  //   source,
-  //   publication_doi,
-  //   intended_use,
-  //   license,
-  //   limitations,
-  // } = req.body;
-
-  // const { email } = req.body;
-
-  // const datacard = {
-  //   title,
-  //   description,
-  //   creator,
-  //   source,
-  //   publication_doi,
-  //   intended_use,
-  //   license,
-  //   limitations,
-  // };
-
   const { filename = 'datacard.json', email, ...datacard } = req.body;
 
   if (!email) return res.status(400).send('Missing the user email');

@@ -56,8 +56,8 @@ const EditDataCard: React.FC = () => {
         <div className="main_dashboard-header">
           <h1 className="main_dashboard_title">Data Card & Metadata</h1>
           <div className="button-row">
-            <button onClick={() => navigate(-1)} className="dashboard-back-button">
-              Back
+            <button onClick={() => navigate('/maindashboard')} className="dashboard-back-button">
+              Home
             </button>
             <span className="splitline">/</span>
             <button onClick={() => navigate('/')} className="dashboard-back-button">

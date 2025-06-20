@@ -89,7 +89,8 @@ const RequesterSearchDashbUpd: React.FC = () => {
             </button>
           </div>
         </div>
-
+      </div>
+      <div className="content-under-header">
         <div className="searchbar-container">
           <div className="dropdown-container">
             <select

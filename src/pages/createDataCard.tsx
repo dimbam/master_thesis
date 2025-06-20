@@ -10,9 +10,9 @@ const CreateDataCard = () => {
     description: '',
     creator: '',
     source: '',
-    publication_doi: '',
-    intended_use: '',
-    limitations: '',
+    // publication_doi: '',
+    // intended_use: '',
+    // limitations: '',
     // risk_of_harm: '',
   });
 
@@ -115,13 +115,13 @@ const CreateDataCard = () => {
             onChange={handleChange}
           />
           <input name="source" placeholder="Source" value={form.source} onChange={handleChange} />
-          <input
+          {/* <input
             name="publication_doi"
             placeholder="Publication DOI"
             value={form.publication_doi}
             onChange={handleChange}
-          />
-          <input
+          /> */}
+          {/* <input
             name="intended_use"
             placeholder="Intended Use"
             value={form.intended_use}
@@ -132,7 +132,7 @@ const CreateDataCard = () => {
             placeholder="Limitations"
             value={form.limitations}
             onChange={handleChange}
-          />
+          /> */}
           {/* <input
             name="risk_of_harm"
             placeholder="Risk of Harm"
