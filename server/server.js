@@ -80,12 +80,11 @@ async function checkEmailExists(email) {
 }
 
 const openai = new OpenAI({
-  apiKey:
-    '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', // Ensure your key is in the .env file
+  apiKey: 'API_KEY', // Ensure your key is in the .env file
 });
 
 const cohere = new CohereClientV2({
-  token: 'FE91SHtoNLzwd4bPs2ydSLHqWXpTss4q1yhQvWaI',
+  token: 'cohere_token',
 });
 
 // Email sending route
