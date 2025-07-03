@@ -18,6 +18,7 @@ import CreateForm from './pages/duo-blockchain/CreateForm';
 import RequesterSearchDashbUpd from './pages/duo-blockchain/Requester_Search_Dashb_updated';
 import DataCardViewRequestAccess from './pages/DataCardViewRequestAccess';
 import RequestAccessForm from './pages/duo-blockchain/RequestAccessForm';
+import QueryLLM from './pages/QueryLLM';
 import EditDataCard from './pages/EditDataCardProvider';
 import logo from '.././luce.png';
 
@@ -89,6 +90,7 @@ function App() {
         <Route path="/datacardviewrequestaccess" element={<DataCardViewRequestAccess />} />
         <Route path="/requesterDashbUpd" element={<RequesterSearchDashbUpd />} />
         <Route path="/requestaccessform" element={<RequestAccessForm />} />
+        <Route path="/queryllm" element={<QueryLLM />} />
         <Route path="/editdatacard" element={<EditDataCard />} />
       </Routes>
     </BrowserRouter>

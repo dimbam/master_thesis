@@ -39,6 +39,7 @@ const MainDashboard: React.FC = () => {
             <div onClick={() => navigate('/requesterDashbUpd')}>
               Open Requester Search Page -- new version from db
             </div>
+            <div onClick={() => navigate('/queryllm')}>Ask LLM</div>
             {/* <div onClick={() => navigate('/datacards')}>View Data Card</div> */}
           </div>
         </div>

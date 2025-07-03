@@ -2,12 +2,16 @@ const winston = require('winston');
 const express = require('express');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
-require('dotenv').config(); // Load environment variables from .env file
+// require('dotenv').config(); // Load environment variables from .env file
 const neo4j = require('neo4j-driver');
 const AWS = require('aws-sdk');
 const multer = require('multer');
 const stream = require('stream');
 const csv = require('csv-parser');
+const OpenAI = require('openai');
+const dotenv = require('dotenv');
+const axios = require('axios'); // Import axios
+const { CohereClientV2 } = require('cohere-ai');
 
 const logger = winston.createLogger({
   level: 'debug',
@@ -74,6 +78,15 @@ async function checkEmailExists(email) {
     await session.close();
   }
 }
+
+const openai = new OpenAI({
+  apiKey:
+    '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', // Ensure your key is in the .env file
+});
+
+const cohere = new CohereClientV2({
+  token: 'FE91SHtoNLzwd4bPs2ydSLHqWXpTss4q1yhQvWaI',
+});
 
 // Email sending route
 app.post('/send-email', (req, res) => {
@@ -551,6 +564,57 @@ app.get('/get-form', async (req, res) => {
   } catch (err) {
     console.error('Error retrieving folder contents:', err);
     res.status(500).send('Failed to retrieve folder contents');
+  }
+});
+
+app.post('/query-llm', async (req, res) => {
+  const { prompt } = req.body;
+  console.log('OpenAI API Key:', process.env.OPENAI_API_KEY);
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo', // Or use gpt-4o-mini-2024-07-18
+      messages: [{ role: 'user', content: prompt }],
+    });
+
+    res.json({ response: response.choices[0].message.content });
+  } catch (err) {
+    console.error('Error querying OpenAI:', err);
+    res.status(500).send('Error querying OpenAI API');
+  }
+});
+
+app.post('/query-cohere', async (req, res) => {
+  const { prompt } = req.body;
+  console.log('Received prompt for Cohere:', prompt); // Debug log
+
+  try {
+    // Call Cohere API for text generation
+    const response = await cohere.chat({
+      model: 'command-a-03-2025', // Use an available model, change if needed
+      messages: [
+        {
+          role: 'user',
+          content: prompt,
+        },
+      ],
+    });
+
+    console.log('Full response from Cohere:', response.body);
+    if (
+      response.body &&
+      response.body.message &&
+      response.body.message.content &&
+      response.body.message.content.length > 0
+    ) {
+      const generatedText = response.body.message.content[0].text;
+      res.json({ response: generatedText });
+    } else {
+      console.error('Unexpected response structure from Cohere:', response.body);
+      res.status(500).send('Error: Unexpected response structure from Cohere');
+    }
+  } catch (err) {
+    console.error('Error querying Cohere:', err.response || err.message);
+    res.status(500).send('Error querying Cohere API');
   }
 });
 
