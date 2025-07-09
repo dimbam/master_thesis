@@ -1,0 +1,228 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2758
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww29240\viewh17820\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 // 1. Uniqueness constraints\
+CREATE CONSTRAINT IF NOT EXISTS\
+  FOR (s:Section)\
+  REQUIRE s.name IS UNIQUE;\
+CREATE CONSTRAINT IF NOT EXISTS\
+  FOR (f:Field)\
+  REQUIRE f.name IS UNIQUE;\
+\
+// 2. Section nodes\
+CREATE (:Section \{name:"1. Model Details"\});\
+CREATE (:Section \{name:"2. Intended Use and Clinical Context"\});\
+CREATE (:Section \{name:"3. Data & Factors"\});\
+CREATE (:Section \{name:"4. Features & Outputs"\});\
+CREATE (:Section \{name:"5. Performance & Validation"\});\
+CREATE (:Section \{name:"6. Methodology & Explainability"\});\
+CREATE (:Section \{name:"7. Additional Information"\});\
+\
+// 3. Field nodes and relationships\
+\
+// Section 1 fields\
+CREATE (f1:Field \{\
+  name:"Model Name",\
+  description:"Official product name of the AI model."\
+\});\
+MATCH (s:Section \{name:"1. Model Details"\})\
+CREATE (s)-[:HAS_FIELD]->(f1);\
+\
+CREATE (f2:Field \{name:"Version", description:"Specific version or release tag (e.g., semantic versioning)."\});\
+MATCH (s:Section \{name:"1. Model Details"\})\
+CREATE (s)-[:HAS_FIELD]->(f2);\
+\
+CREATE (f3:Field \{name:"Developer / Organization", description:"Institution or company that developed and maintains the model."\});\
+MATCH (s:Section \{name:"1. Model Details"\})\
+CREATE (s)-[:HAS_FIELD]->(f3);\
+\
+CREATE (f4:Field \{name:"Release Date", description:"Date of first public release of this version (YYYY-MM-DD)."\});\
+MATCH (s:Section \{name:"1. Model Details"\})\
+CREATE (s)-[:HAS_FIELD]->(f4);\
+\
+CREATE (f5:Field \{name:"Description", description:"Concise overview of purpose, inputs/outputs, and clinical context."\});\
+MATCH (s:Section \{name:"1. Model Details"\})\
+CREATE (s)-[:HAS_FIELD]->(f5);\
+\
+CREATE (f6:Field \{name:"Intended Function", description:"Stated clinical function or intended use (e.g., diagnosis, screening)."\});\
+MATCH (s:Section \{name:"1. Model Details"\})\
+CREATE (s)-[:HAS_FIELD]->(f6);\
+\
+CREATE (f7:Field \{name:"Algorithm(s) Used", description:"Core ML architecture(s) used in the model (e.g., CNN, transformer ensemble)."\});\
+MATCH (s:Section \{name:"1. Model Details"\})\
+CREATE (s)-[:HAS_FIELD]->(f7);\
+\
+CREATE (f8:Field \{name:"GMDN Code", description:"Global Medical Device Nomenclature identifier (if applicable)."\});\
+MATCH (s:Section \{name:"1. Model Details"\})\
+CREATE (s)-[:HAS_FIELD]->(f8);\
+\
+CREATE (f9:Field \{name:"Licensing", description:"Usage and distribution terms (e.g., Apache 2.0, Proprietary)."\});\
+MATCH (s:Section \{name:"1. Model Details"\})\
+CREATE (s)-[:HAS_FIELD]->(f9);\
+\
+CREATE (f10:Field \{name:"Support Contact", description:"Email or web portal for user support and inquiries."\});\
+MATCH (s:Section \{name:"1. Model Details"\})\
+CREATE (s)-[:HAS_FIELD]->(f10);\
+\
+CREATE (f11:Field \{name:"Literature References", description:"Peer-reviewed publications describing or validating the model."\});\
+MATCH (s:Section \{name:"1. Model Details"\})\
+CREATE (s)-[:HAS_FIELD]->(f11);\
+\
+CREATE (f12:Field \{name:"Clinical Study References", description:"Links to internal validation reports or post-market clinical follow-up (PMCF) studies."\});\
+MATCH (s:Section \{name:"1. Model Details"\})\
+CREATE (s)-[:HAS_FIELD]->(f12);\
+\
+CREATE (f13:Field \{name:"Logo / Image (optional)", description:"Visual identifier for the model (icon or logo)."\});\
+MATCH (s:Section \{name:"1. Model Details"\})\
+CREATE (s)-[:HAS_FIELD]->(f13);\
+\
+// Section 2 fields\
+CREATE (f21:Field \{name:"Primary Intended Users", description:"End-users such as clinicians, technicians, or researchers expected to interact with or interpret the model outputs."\});\
+MATCH (s:Section \{name:"2. Intended Use and Clinical Context"\})\
+CREATE (s)-[:HAS_FIELD]->(f21);\
+\
+CREATE (f22:Field \{name:"Clinical Indications", description:"Specific patient conditions, clinical tasks, or diagnostic targets for which the model is designed."\});\
+MATCH (s:Section \{name:"2. Intended Use and Clinical Context"\})\
+CREATE (s)-[:HAS_FIELD]->(f22);\
+\
+CREATE (f23:Field \{name:"Contraindications", description:"Scenarios, populations, or data conditions where model use is discouraged or inappropriate."\});\
+MATCH (s:Section \{name:"2. Intended Use and Clinical Context"\})\
+CREATE (s)-[:HAS_FIELD]->(f23);\
+\
+CREATE (f24:Field \{name:"Intended Use Setting", description:"Type of environment or institution in which the model is intended to operate (e.g., hospital, telemedicine, research lab)."\});\
+MATCH (s:Section \{name:"2. Intended Use and Clinical Context"\})\
+CREATE (s)-[:HAS_FIELD]->(f24);\
+\
+CREATE (f25:Field \{name:"Out of Scope Applications", description:"Known or foreseeable use cases that are unsupported or unsafe."\});\
+MATCH (s:Section \{name:"2. Intended Use and Clinical Context"\})\
+CREATE (s)-[:HAS_FIELD]->(f25);\
+\
+// Section 3 fields\
+CREATE (f31:Field \{name:"Concept Sets", description:"Definitions of clinical concepts (e.g., diagnoses, procedures) grouped using standard vocabularies such as OMOP, SNOMED, or LOINC."\});\
+MATCH (s:Section \{name:"3. Data & Factors"\})\
+CREATE (s)-[:HAS_FIELD]->(f31);\
+\
+CREATE (f32:Field \{name:"Primary Cohort Criteria", description:"Logical rules (inclusion/exclusion) for selecting patient records used for training and evaluation."\});\
+MATCH (s:Section \{name:"3. Data & Factors"\})\
+CREATE (s)-[:HAS_FIELD]->(f32);\
+\
+CREATE (f33:Field \{name:"Source Datasets", description:"Structured summary of datasets used in model development and validation, including origin, size, collection period, and population characteristics."\});\
+MATCH (s:Section \{name:"3. Data & Factors"\})\
+CREATE (s)-[:HAS_FIELD]->(f33);\
+\
+CREATE (f34:Field \{name:"Data Distribution Summary", description:"Descriptive statistics on key demographic and clinical variables (e.g., age, gender, race/ethnicity, comorbidities)."\});\
+MATCH (s:Section \{name:"3. Data & Factors"\})\
+CREATE (s)-[:HAS_FIELD]->(f34);\
+\
+CREATE (f35:Field \{name:"Data Representativeness", description:"Assessment of how well the development data reflects the target population for deployment (e.g., coverage across subgroups or geographies)."\});\
+MATCH (s:Section \{name:"3. Data & Factors"\})\
+CREATE (s)-[:HAS_FIELD]->(f35);\
+\
+CREATE (f36:Field \{name:"Data Governance", description:"Information about data access, ethics approval, consent mechanisms, and data anonymization/de-identification."\});\
+MATCH (s:Section \{name:"3. Data & Factors"\})\
+CREATE (s)-[:HAS_FIELD]->(f36);\
+\
+// Section 4 fields\
+CREATE (f41:Field \{name:"Input Features", description:"Structured list of all model input variables, including name, data type, required/optional status, clinical domain, value ranges, and units if applicable."\});\
+MATCH (s:Section \{name:"4. Features & Outputs"\})\
+CREATE (s)-[:HAS_FIELD]->(f41);\
+\
+CREATE (f42:Field \{name:"Output Predictions", description:"Description of the model\'92s outputs, including predicted target(s), type (e.g., classification, regression), expected units, and possible value ranges or classes."\});\
+MATCH (s:Section \{name:"4. Features & Outputs"\})\
+CREATE (s)-[:HAS_FIELD]->(f42);\
+\
+CREATE (f43:Field \{name:"Feature Type Distribution", description:"Aggregated summary of input feature types (e.g., count of numeric vs. categorical), optionally visualized as a pie chart."\});\
+MATCH (s:Section \{name:"4. Features & Outputs"\})\
+CREATE (s)-[:HAS_FIELD]->(f43);\
+\
+CREATE (f44:Field \{name:"Uncertainty Quantification", description:"Method used to express model output confidence, such as prediction intervals, probability scores, or calibrated likelihoods."\});\
+MATCH (s:Section \{name:"4. Features & Outputs"\})\
+CREATE (s)-[:HAS_FIELD]->(f44);\
+\
+CREATE (f45:Field \{name:"Output Interpretability", description:"Guidance on how outputs are intended to be interpreted in the clinical workflow, and any transformation applied before display."\});\
+MATCH (s:Section \{name:"4. Features & Outputs"\})\
+CREATE (s)-[:HAS_FIELD]->(f45);\
+\
+// Section 5 fields\
+CREATE (f51:Field \{name:"Validation Dataset(s)", description:"Description of datasets used for evaluation, including source institution, population characteristics, and whether they are internal or external."\});\
+MATCH (s:Section \{name:"5. Performance & Validation"\})\
+CREATE (s)-[:HAS_FIELD]->(f51);\
+\
+CREATE (f52:Field \{name:"Claimed Metrics", description:"Developer-reported performance results based on internal validation (e.g., AUC, sensitivity, specificity)."\});\
+MATCH (s:Section \{name:"5. Performance & Validation"\})\
+CREATE (s)-[:HAS_FIELD]->(f52);\
+\
+CREATE (f53:Field \{name:"Validated Metrics", description:"Metrics obtained from independent or external validation (e.g., multi-center studies, held-out test sets)."\});\
+MATCH (s:Section \{name:"5. Performance & Validation"\})\
+CREATE (s)-[:HAS_FIELD]->(f53);\
+\
+CREATE (f54:Field \{name:"Calibration Analysis", description:"Evaluation of predicted probabilities vs. observed outcomes using calibration plots, Brier score, or calibration slope."\});\
+MATCH (s:Section \{name:"5. Performance & Validation"\})\
+CREATE (s)-[:HAS_FIELD]->(f54);\
+\
+CREATE (f55:Field \{name:"Fairness Assessment", description:"Disaggregated performance across protected or clinically relevant subgroups (e.g., sex, race, age strata), including disparity measures."\});\
+MATCH (s:Section \{name:"5. Performance & Validation"\})\
+CREATE (s)-[:HAS_FIELD]->(f55);\
+\
+CREATE (f56:Field \{name:"Metric Validation Status", description:"For each reported metric, specify whether it is claimed, internally validated, or externally validated."\});\
+MATCH (s:Section \{name:"5. Performance & Validation"\})\
+CREATE (s)-[:HAS_FIELD]->(f56);\
+\
+// Section 6 fields\
+CREATE (f61:Field \{name:"Model Development Workflow", description:"End-to-end summary of the pipeline from raw data to final model, including dataset splitting, selection criteria, and versioning practices."\});\
+MATCH (s:Section \{name:"6. Methodology & Explainability"\})\
+CREATE (s)-[:HAS_FIELD]->(f61);\
+\
+CREATE (f62:Field \{name:"Training Procedure", description:"Description of training steps, including objective function, optimization algorithm, training duration, hardware/software used."\});\
+MATCH (s:Section \{name:"6. Methodology & Explainability"\})\
+CREATE (s)-[:HAS_FIELD]->(f62);\
+\
+CREATE (f63:Field \{name:"Data Preprocessing", description:"Key steps applied to input data before training, including normalization, encoding, filtering, and imputation strategies."\});\
+MATCH (s:Section \{name:"6. Methodology & Explainability"\})\
+CREATE (s)-[:HAS_FIELD]->(f63);\
+\
+CREATE (f64:Field \{name:"Synthetic Data Usage", description:"If applicable, details on use of synthetic data, generator type, and sampling parameters."\});\
+MATCH (s:Section \{name:"6. Methodology & Explainability"\})\
+CREATE (s)-[:HAS_FIELD]->(f64);\
+\
+CREATE (f65:Field \{name:"XAI Method", description:"Tools or techniques used to explain individual predictions (e.g., SHAP, LIME, Grad-CAM), and their intended use in clinical interpretation."\});\
+MATCH (s:Section \{name:"6. Methodology & Explainability"\})\
+CREATE (s)-[:HAS_FIELD]->(f65);\
+\
+CREATE (f66:Field \{name:"Global vs. Local Interpretability", description:"Clarify whether explainability methods target global model behavior or local (instance-level) predictions."\});\
+MATCH (s:Section \{name:"6. Methodology & Explainability"\})\
+CREATE (s)-[:HAS_FIELD]->(f66);\
+\
+// Section 7 fields\
+CREATE (f71:Field \{name:"Benefit\'96Risk Summary", description:"Concise statement comparing the expected clinical benefits with potential risks or harms from model usage."\});\
+MATCH (s:Section \{name:"7. Additional Information"\})\
+CREATE (s)-[:HAS_FIELD]->(f71);\
+\
+CREATE (f72:Field \{name:"Post-Market Surveillance Plan", description:"Plan for monitoring real-world performance, including data collection, thresholds for concern, and corrective actions."\});\
+MATCH (s:Section \{name:"7. Additional Information"\})\
+CREATE (s)-[:HAS_FIELD]->(f72);\
+\
+CREATE (f73:Field \{name:"Ethical Considerations", description:"Identified ethical risks, data representativeness issues, and steps taken to mitigate harm (e.g., fairness audits)."\});\
+MATCH (s:Section \{name:"7. Additional Information"\})\
+CREATE (s)-[:HAS_FIELD]->(f73);\
+\
+CREATE (f74:Field \{name:"Caveats & Limitations", description:"Known limitations such as data quality issues, generalizability gaps, or potential overfitting."\});\
+MATCH (s:Section \{name:"7. Additional Information"\})\
+CREATE (s)-[:HAS_FIELD]->(f74);\
+\
+CREATE (f75:Field \{name:"Recommendations for Safe Use", description:"List of best practices and safeguards clinicians should follow when interpreting or deploying model outputs."\});\
+MATCH (s:Section \{name:"7. Additional Information"\})\
+CREATE (s)-[:HAS_FIELD]->(f75);\
+\
+CREATE (f76:Field \{name:"Explainability Recommendations", description:"Guidelines for presenting model outputs to users in an interpretable manner, aligned with local workflow."\});\
+MATCH (s:Section \{name:"7. Additional Information"\})\
+CREATE (s)-[:HAS_FIELD]->(f76);\
+\
+CREATE (f77:Field \{name:"Supporting Documents", description:"List of linked resources (e.g., validation study, technical file, IFU, model card PDF) for regulators and reviewers."\});\
+MATCH (s:Section \{name:"7. Additional Information"\})\
+CREATE (s)-[:HAS_FIELD]->(f77);\
+}
