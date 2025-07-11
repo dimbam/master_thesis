@@ -617,6 +617,29 @@ app.post('/query-cohere', async (req, res) => {
   }
 });
 
+app.get('/modelcards', async (req, res) => {
+  const session = driver3.session();
+  try {
+    // Get each ModelCard and its linked fields and values
+    const result = await session.run(`
+      MATCH (m:ModelCard)-[r:HAS_VALUE]->(f:Field)
+      RETURN m, collect({field: f.name, value: r.value}) as fields
+    `);
+
+    const cards = result.records.map((rec) => ({
+      ...rec.get('m').properties,
+      fields: rec.get('fields'),
+    }));
+
+    res.json(cards);
+  } catch (err) {
+    console.error('Error fetching model cards:', err);
+    res.status(500).send('Failed to fetch model cards');
+  } finally {
+    await session.close();
+  }
+});
+
 const port = 5000;
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);

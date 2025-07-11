@@ -15,11 +15,15 @@ const RequesterSearchDashbUpd: React.FC = () => {
   const handleSearch = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/all-user-datasets');
-      if (!res.ok) throw new Error('Failed to fetch dataset files');
-      const data = await res.json();
+      if (selectedFilter === 'Model Card') {
+        await fetchModelCards();
+      } else {
+        const res = await fetch('http://localhost:5000/all-user-datasets');
+        if (!res.ok) throw new Error('Failed to fetch dataset files');
+        const data = await res.json();
 
-      setFiles(data);
+        setFiles(data);
+      }
     } catch (err) {
       console.error('Fetch error:', err);
     } finally {
@@ -47,6 +51,21 @@ const RequesterSearchDashbUpd: React.FC = () => {
       navigate('/datacardviewrequestaccess', { state: { datacard: cardData, metadata } });
     } catch (err) {
       console.error('Fetch error:', err);
+    }
+  };
+
+  const fetchModelCards = async () => {
+    setLoading(true);
+
+    try {
+      const res = await fetch('http://localhost:5000/modelcards');
+      if (!res.ok) throw new Error('Failed to fetch Model Cards');
+      const data = await res.json();
+      setFiles(data);
+    } catch (err) {
+      console.error('Fetch error:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -118,35 +137,66 @@ const RequesterSearchDashbUpd: React.FC = () => {
           {loading ? (
             <p>Loading...</p>
           ) : (
-            <ul className="dataset-list">
-              {files.map((file, idx) => (
-                <li key={idx} className="dataset-card">
-                  <div className="dataset-info">
-                    <strong>Author: {file.email}</strong> → {file.filename}
-                    <br />
-                    <em>Path:</em> {file.fullPath}
-                    <br />
-                    <em>Size:</em> {file.size} bytes
-                    <br />
-                    <em>Last Modified:</em> {new Date(file.lastModified).toLocaleString()}
-                  </div>
-                  <div className="dataset-button-container">
-                    <button
-                      onClick={() => fetchDataCard(file.fullPath)}
-                      className="open-data-card-button"
-                    >
-                      Open Data Card
-                    </button>
-                    <button
-                      onClick={() => fetchForm(file.fullPath)}
-                      className="open-data-card-button"
-                    >
-                      Request Access
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
+            <React.Fragment>
+              {selectedFilter === 'Model Card' ? (
+                <ul className="dataset-list">
+                  {files.length === 0 && <p>No Model Cards found.</p>}
+                  {files.map((model, idx) => (
+                    <li key={idx} className="dataset-card">
+                      <div className="dataset-info">
+                        <strong>Model Name:</strong> {model.name}
+                        <br />
+                        {/* You can highlight more "core" model info here if needed */}
+                        <ul>
+                          {Array.isArray(model.fields) &&
+                            model.fields.map((f, i) => (
+                              <li key={i}>
+                                <strong>{f.field}:</strong> {f.value}
+                              </li>
+                            ))}
+                        </ul>
+                      </div>
+                      {
+                        <div className="dataset-button-container">
+                          <button className="open-data-card-button">View Details</button>
+                        </div>
+                      }
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <ul className="dataset-list">
+                  {files.length === 0 && <p>No datasets found.</p>}
+                  {files.map((file, idx) => (
+                    <li key={idx} className="dataset-card">
+                      <div className="dataset-info">
+                        <strong>Author: {file.email}</strong> → {file.filename}
+                        <br />
+                        <em>Path:</em> {file.fullPath}
+                        <br />
+                        <em>Size:</em> {file.size} bytes
+                        <br />
+                        <em>Last Modified:</em> {new Date(file.lastModified).toLocaleString()}
+                      </div>
+                      <div className="dataset-button-container">
+                        <button
+                          onClick={() => fetchDataCard(file.fullPath)}
+                          className="open-data-card-button"
+                        >
+                          Open Data Card
+                        </button>
+                        <button
+                          onClick={() => fetchForm(file.fullPath)}
+                          className="open-data-card-button"
+                        >
+                          Request Access
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </React.Fragment>
           )}
         </div>
 
