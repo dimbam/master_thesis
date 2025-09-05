@@ -12,6 +12,7 @@ const OpenAI = require('openai');
 const dotenv = require('dotenv');
 const axios = require('axios'); // Import axios
 const { CohereClientV2 } = require('cohere-ai');
+const { ChromaClient } = require('chromadb');
 
 const logger = winston.createLogger({
   level: 'debug',
@@ -80,7 +81,8 @@ async function checkEmailExists(email) {
 }
 
 const openai = new OpenAI({
-  apiKey: 'API_KEY', // Ensure your key is in the .env file
+  apiKey:
+    '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', // Ensure your key is in the .env file
 });
 
 const cohere = new CohereClientV2({
@@ -637,6 +639,126 @@ app.get('/modelcards', async (req, res) => {
     res.status(500).send('Failed to fetch model cards');
   } finally {
     await session.close();
+  }
+});
+
+async function getModelCardFields(modelCardName) {
+  const session = driver3.session();
+
+  const query = `
+    MATCH (m:ModelCard {name: $modelcard_name})-[r:HAS_VALUE]->(f:Field)
+    RETURN m.name AS modelName, f.name AS fieldName, r.value AS fieldValue
+  `;
+
+  const result = await session.run(query, { modelcard_name: modelCardName });
+
+  let modelName = '';
+  const fieldLines = [];
+
+  result.records.forEach((record) => {
+    modelName = record.get('modelName');
+    const fieldName = record.get('fieldName');
+    const fieldValue = record.get('fieldValue');
+    fieldLines.push(`- ${fieldName}: ${fieldValue}`);
+  });
+
+  await session.close();
+  return { modelName, fieldText: fieldLines.join('\n') };
+}
+
+// const client = new ChromaClient();
+// let collection;
+
+// async function initChroma() {
+//   try {
+//     collection = await client.createCollection({ name: 'model_card_summaries', getOrCreate: true });
+//     console.log('Chroma collection ready');
+//   } catch (err) {
+//     console.log('Failed to initialize ChromaDB:', err);
+//   }
+// }
+
+// initChroma();
+
+// async function storeSummaryInChromaDB(modelCardName, summary) {
+//   try {
+//     await collection.add({
+//       ids: [modelCardName], // Unique ID for the model card
+//       documents: [summary], // The generated summary
+//     });
+//     console.log('Summary stored in ChromaDB');
+//   } catch (error) {
+//     console.error('Error storing in ChromaDB:', error);
+//   }
+// }
+
+async function storeSummaryInMinIO(modelCardName, summary) {
+  const key = `ChromaDBSummaries/${modelCardName}`;
+  const data = {
+    modelCardName,
+    summary,
+  };
+  const fileBuffer = Buffer.from(JSON.stringify(data, null, 2));
+
+  try {
+    await s3
+      .upload({
+        Bucket: 'luce-files',
+        Key: key,
+        Body: fileBuffer,
+        ContentType: 'application/json',
+      })
+      .promise();
+
+    console.log(`Uploaded summary to ${key}`);
+  } catch (err) {
+    console.error('MinIO upload error:', err);
+  }
+}
+
+app.post('/generate-summary', async (req, res) => {
+  const { modelCardName } = req.body;
+
+  if (!modelCardName) {
+    return res.status(400).send('Model card name is required');
+  }
+
+  try {
+    const { modelName, fieldText } = await getModelCardFields(modelCardName);
+
+    // Generate the summary using OpenAI
+    const prompt = `
+    You are a data scientist that writes summaries of machine learning model cards.
+
+    Model Name: ${modelName}
+    Fields:
+    ${fieldText}
+
+    Write a 2 or 3 sentence summary of this model card.
+    `;
+
+    const response = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [{ role: 'user', content: prompt }],
+    });
+
+    const summary = response.choices[0].message.content;
+    console.log(summary);
+
+    // // Store the summary in ChromaDB
+    // await client.database('model_card_summaries').add({
+    //   ids: [modelCardName],
+    //   documents: [summary],
+    // });
+
+    // storeSummaryInChromaDB(modelCardName, summary);
+    storeSummaryInMinIO(modelCardName, summary);
+
+    res.json({ modelCardName, summary });
+    // winston.info(`Summary for '${modelCardName}' stored in ChromaDB`);
+  } catch (err) {
+    // winston.error('Error generating or storing summary:', err);
+    res.status(500).send('Error generating or storing summary');
   }
 });
 

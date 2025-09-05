@@ -20,6 +20,7 @@ import DataCardViewRequestAccess from './pages/DataCardViewRequestAccess';
 import RequestAccessForm from './pages/duo-blockchain/RequestAccessForm';
 import QueryLLM from './pages/QueryLLM';
 import EditDataCard from './pages/EditDataCardProvider';
+import Generate_summaries from './pages/duo-blockchain/Generate_model_card_summaries';
 import logo from '.././luce.png';
 
 function HomePage() {
@@ -92,6 +93,7 @@ function App() {
         <Route path="/requestaccessform" element={<RequestAccessForm />} />
         <Route path="/queryllm" element={<QueryLLM />} />
         <Route path="/editdatacard" element={<EditDataCard />} />
+        <Route path="/generateSummaries" element={<Generate_summaries />} />
       </Routes>
     </BrowserRouter>
   );

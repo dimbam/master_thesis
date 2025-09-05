@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.13.6",
+    "@chroma-core/default-embed": "^0.1.8",
     "@neo4j/graphql": "^7.0.0",
     "@react-native-async-storage/async-storage": "^2.1.2",
     "@react-navigation/native-stack": "^7.3.10",
@@ -22,6 +23,7 @@
     "aws-sdk": "^2.1692.0",
     "axios": "^1.10.0",
     "body-parser": "^2.2.0",
+    "chromadb": "^3.0.14",
     "cohere-ai": "^7.17.1",
     "csv-parse": "^5.6.0",
     "csv-parser": "^3.2.0",

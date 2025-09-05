@@ -146,7 +146,7 @@ const RequesterSearchDashbUpd: React.FC = () => {
                       <div className="dataset-info">
                         <strong>Model Name:</strong> {model.name}
                         <br />
-                        {/* You can highlight more "core" model info here if needed */}
+                        {/* Add more "core" model info here*/}
                         <ul>
                           {Array.isArray(model.fields) &&
                             model.fields.map((f, i) => (
@@ -158,7 +158,7 @@ const RequesterSearchDashbUpd: React.FC = () => {
                       </div>
                       {
                         <div className="dataset-button-container">
-                          <button className="open-data-card-button">View Details</button>
+                          {/* <button className="open-data-card-button">View Details</button> */}
                         </div>
                       }
                     </li>

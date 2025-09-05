@@ -27,3 +27,8 @@ node .\index.js
 To start the gateway service:
 cd C:\Users\bamdi\Documents\Projects\thesis_blockchain\blockchain-app\gateway
 node .\gateway.js
+
+
+
+For the chromadb docker container, run this to store data locally:
+docker run -p 8000:8000 -v C:/Users/bamdi/Documents/Projects/thesis_blockchain/chroma_data:/chroma_data ghcr.io/chroma-core/chroma:latest

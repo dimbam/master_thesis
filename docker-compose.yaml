@@ -47,8 +47,20 @@ services:
       MINIO_ROOT_PASSWORD: minioadmin
     command: server --console-address ":9001" /data
 
+  chromadb:
+    image: ghcr.io/chroma-core/chroma:latest # Correct image name
+    container_name: chromadb
+    ports:
+      - '5002:8000' # Changed port mapping from 5000 to 5002
+    volumes:
+      - ./chroma-data:/chroma_data # Persist ChromaDB data locally
+    environment:
+      - CHROMA_SERVER_CORS_ALLOW_ORIGINS=http://localhost:3000 # Adjust if needed for your frontend app
+    restart: unless-stopped
+
 volumes:
   neo4j-db1-data:
   neo4j-db2-data:
   neo4j-db3-data:
   minio-data:
+  # chroma-data:
