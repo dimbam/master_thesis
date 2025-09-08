@@ -30,5 +30,9 @@ node .\gateway.js
 
 
 
-For the chromadb docker container, run this to store data locally:
+For the chromadb docker container, run this to store data locally (but it's not implemented):
 docker run -p 8000:8000 -v C:/Users/bamdi/Documents/Projects/thesis_blockchain/chroma_data:/chroma_data ghcr.io/chroma-core/chroma:latest
+
+
+For the chromadb client docker container, run this:
+docker run -p 8000:8000 ghcr.io/chroma-core/chroma:latest

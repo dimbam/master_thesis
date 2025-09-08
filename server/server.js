@@ -14,6 +14,8 @@ const axios = require('axios'); // Import axios
 const { CohereClientV2 } = require('cohere-ai');
 const { ChromaClient } = require('chromadb');
 
+require('dotenv').config();
+
 const logger = winston.createLogger({
   level: 'debug',
   format: winston.format.json(),
@@ -81,8 +83,7 @@ async function checkEmailExists(email) {
 }
 
 const openai = new OpenAI({
-  apiKey:
-    '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', // Ensure your key is in the .env file
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 const cohere = new CohereClientV2({
@@ -355,6 +356,7 @@ app.post('/upload-form', upload.single('file'), async (req, res) => {
 });
 
 const { gql, request } = require('graphql-request');
+const { object } = require('cohere-ai/core/schemas');
 
 app.get('/all-user-datasets', async (req, res) => {
   try {
@@ -759,6 +761,68 @@ app.post('/generate-summary', async (req, res) => {
   } catch (err) {
     // winston.error('Error generating or storing summary:', err);
     res.status(500).send('Error generating or storing summary');
+  }
+});
+
+async function getSummariesfromMinIO() {
+  const listed = await s3
+    .listObjectsV2({
+      Bucket: 'luce-files',
+      Prefix: 'ChromaDBSummaries/',
+    })
+    .promise();
+
+  const summaries = [];
+
+  for (const obj of listed.Contents || []) {
+    const data = await s3
+      .getObject({
+        Bucket: 'luce-files',
+        Key: obj.Key,
+      })
+      .promise();
+
+    const parsed = JSON.parse(data.Body.toString('utf-8'));
+
+    summaries.push({
+      modelCardName: parsed.modelCardName,
+      summary: parsed.summary,
+    });
+  }
+  return summaries;
+}
+
+app.get('/getAllSummariesfromMinIO', async (req, res) => {
+  try {
+    const miniosummaries = await getSummariesfromMinIO();
+    res.json(miniosummaries);
+  } catch (err) {
+    console.error('Error retrieving summaries: ', err);
+    res.status(500).json({ error: 'Error retrieving summaries' });
+  }
+});
+
+app.post('/querymodelcardMatching', async (req, res) => {
+  try {
+    const { query, top_k = 1 } = req.body;
+    if (!query) return res.status(400).json({ error: 'No query provided' });
+    const miniosummaries = await getSummariesfromMinIO();
+
+    const ids = [];
+    const documents = [];
+    for (const item of miniosummaries) {
+      ids.push(item.modelCardName);
+      documents.push(item.summary);
+    }
+    console.log(ids);
+    const chroma = new ChromaClient({ path: 'http://localhost:8000' });
+    const collection = await chroma.getOrCreateCollection({ name: 'model_cards' });
+    await collection.add({ ids, documents });
+    const results = await collection.query({ queryTexts: [query], nResults: top_k });
+    res.json({ bestMatch: results.ids[0][0], distance: results.distances[0][0] });
+  } catch (err) {
+    console.error('querymodelcardMatching error:', err);
+    res.status(500).json({ error: 'Server error' });
   }
 });
 
