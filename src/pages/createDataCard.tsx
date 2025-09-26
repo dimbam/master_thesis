@@ -85,6 +85,7 @@ const CreateDataCard = () => {
             </button>
           </div>
         </div>
+        <div className='spacer'></div>
 
         <form onSubmit={handleSubmit}>
           {/* <input

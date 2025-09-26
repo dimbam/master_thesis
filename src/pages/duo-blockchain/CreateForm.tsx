@@ -1002,6 +1002,12 @@ export default function CreateForm() {
               <>
                 <button
                   className="button_col"
+                  disabled={
+                    currentMainIndex === 0 &&
+                    !Object.keys(selected).some(
+                      (code) => DUO_METADATA[code]?.subclassOf === 'DUO:0000001' && selected[code],
+                    )
+                  }
                   onClick={() => {
                     const valid = validateFieldSet(selected, [
                       {

@@ -33,12 +33,12 @@ const driver3 = neo4j.driver('bolt://localhost:7689', neo4j.auth.basic('neo4j', 
 
 const transporter = nodemailer.createTransport({
   pool: true,
-  host: 'mail.imedphys.med.auth.gr',
+  host: process.env.SMTP_HOST,
   port: 465,
   secure: true,
   auth: {
-    user: 'assos-developer@imedphys.med.auth.gr',
-    pass: 'Dbue56tgKj09SnEnMIi7XuBo8NF80lx2Iy4F',
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
   },
   logger: true,
   debug: true,
@@ -814,7 +814,6 @@ app.post('/querymodelcardMatching', async (req, res) => {
       ids.push(item.modelCardName);
       documents.push(item.summary);
     }
-    console.log(ids);
     const chroma = new ChromaClient({ path: 'http://localhost:8000' });
     const collection = await chroma.getOrCreateCollection({ name: 'model_cards' });
     await collection.add({ ids, documents });
@@ -825,6 +824,8 @@ app.post('/querymodelcardMatching', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
+// TODO: Take the modelcardname and return the best modelcard on an actual page with all the info of the modelcard
 
 const port = 5000;
 app.listen(port, () => {
