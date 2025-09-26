@@ -104,8 +104,9 @@ export default function CreateForm() {
 
   const fetchCountries = async () => {
     try {
-      const res = await fetch('https://restcountries.com/v3.1/all');
+      const res = await fetch('https://restcountries.com/v3.1/all?fields=name');
       const data = await res.json();
+      console.log(data);
       const names = data.map((country: any) => country.name.common).sort();
       setCountries(names);
     } catch (err) {
