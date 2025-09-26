@@ -653,7 +653,7 @@ export default function CreateForm() {
 
         {isSelected && code === 'DUO:0000025' && (
           <div style={{ marginTop: 12, marginLeft: 24 }}>
-            <div style={{ display: 'flex', gap: '24px' }}>
+            <div style={{ display: 'flex', gap: '12px' }}>
               <label style={{ display: 'flex', flexDirection: 'column' }}>
                 Start Date:
                 <input
@@ -666,7 +666,13 @@ export default function CreateForm() {
                       setStartDate(value);
                     }
                   }}
-                  style={{ display: 'block', padding: 6, fontSize: 14, marginTop: 4 }}
+                  style={{
+                    display: 'block',
+                    padding: 6,
+                    fontSize: 14,
+                    marginTop: 4,
+                    width: '150px',
+                  }}
                 />
               </label>
               <label style={{ display: 'flex', flexDirection: 'column' }}>
@@ -681,7 +687,13 @@ export default function CreateForm() {
                       setEndDate(value);
                     }
                   }}
-                  style={{ display: 'block', padding: 6, fontSize: 14, marginTop: 4 }}
+                  style={{
+                    display: 'block',
+                    padding: 6,
+                    fontSize: 14,
+                    marginTop: 4,
+                    width: '150px',
+                  }}
                 />
               </label>
             </div>
