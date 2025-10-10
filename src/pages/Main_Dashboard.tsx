@@ -40,6 +40,7 @@ const MainDashboard: React.FC = () => {
               Open Requester Search Page -- new version from db
             </div>
             <div onClick={() => navigate('/queryllm')}>Ask LLM</div>
+            <div onClick={() => navigate('/generateSummaries')}>Model Card Summaries</div>
             {/* <div onClick={() => navigate('/datacards')}>View Data Card</div> */}
           </div>
         </div>

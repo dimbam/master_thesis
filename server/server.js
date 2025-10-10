@@ -13,6 +13,9 @@ const dotenv = require('dotenv');
 const axios = require('axios'); // Import axios
 const { CohereClientV2 } = require('cohere-ai');
 const { ChromaClient } = require('chromadb');
+const { ethers } = require('ethers');
+const crypto = require('crypto');
+const fs = require('fs');
 
 require('dotenv').config();
 
@@ -89,6 +92,15 @@ const openai = new OpenAI({
 const cohere = new CohereClientV2({
   token: 'cohere_token',
 });
+
+const abi = JSON.parse(fs.readFileSync('../FormRegistry.json')).abi;
+// const provider = new ethers.JsonRpcProvider('https://rpc-amoy.polygon.technology'); //polygonamoy testnet
+const provider = new ethers.JsonRpcProvider('http://127.0.0.1:8545'); //localnet
+// const wallet = new ethers.Wallet(process.env.Private_KEY, provider); //for polygonamoy wallet
+const wallet = new ethers.Wallet(process.env.HARDHAT_PREFUNDED_KEY, provider);
+// const contractAddress = process.env.CONTRACT_ADDRESS;
+const contractAddress = process.env.LOCALHOST_CONTRACT_ADDRESS;
+const contract = new ethers.Contract(contractAddress, abi, wallet);
 
 // Email sending route
 app.post('/send-email', (req, res) => {
@@ -259,7 +271,6 @@ app.get('/get-emails', async (req, res) => {
   const session = driver1.session();
 });
 
-const fs = require('fs');
 const path = require('path');
 
 app.get('/form', (req, res) => {
@@ -347,11 +358,21 @@ app.post('/upload-form', upload.single('file'), async (req, res) => {
   try {
     const result = await s3.upload(params).promise();
     console.log(`Uploaded ${file.originalname} to ${keyPath}`);
-    console.log('Upload result:', result);
-    res.status(200).send(`Form uploaded to ${keyPath}`);
+
+    const hash = crypto.createHash('sha256').update(keyPath).digest('hex');
+    console.log('Recording on-chain');
+    const tx = await contract.storeFormHash(hash, keyPath);
+    await tx.wait();
+    console.log('On-chain transaction complete', tx.hash);
+
+    res.status(200).json({
+      message: 'Form uploaded and recorded on-chain',
+      minioPath: keyPath,
+      txHash: tx.hash,
+    });
   } catch (err) {
-    console.error('Upload error:', err);
-    res.status(500).send('Failed to upload form');
+    console.error('Upload or blockchain error:', err);
+    res.status(500).send('Failed to upload form or store on-chain');
   }
 });
 
