@@ -144,8 +144,9 @@ export default function RequestAccessForm() {
 
   const fetchCountries = async () => {
     try {
-      const res = await fetch('https://restcountries.com/v3.1/all');
+      const res = await fetch('https://restcountries.com/v3.1/all?fields=name');
       const data = await res.json();
+      console.log(data);
       const names = data.map((country: any) => country.name.common).sort();
       setCountries(names);
     } catch (err) {
@@ -518,14 +519,106 @@ export default function RequestAccessForm() {
           <div style={{ marginTop: 12, marginLeft: 24 }}>
             <select
               value={selectedValue22}
-              onChange={(e) => setSelectedValue22(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                setSelectedValue22(val);
+                if (val === 'Countries') {
+                  fetchCountries();
+                }
+              }}
               style={{ padding: 8, fontSize: 16, width: '300px' }}
             >
               <option value="">Select an option</option>
-              <option value="europe">Europe</option>
-              <option value="asia">Asia</option>
-              <option value="africa">Africa</option>
+              <option value="Countries">Countries</option>
+              <option value="Continents">Continents</option>
+              <option value="Groups/Unions">Groups/Unions</option>
             </select>
+
+            {selectedValue22 === 'Countries' && (
+              <div style={{ marginTop: 12, marginLeft: 24 }}>
+                <select
+                  value=""
+                  onChange={(e) => {
+                    const country = e.target.value;
+                    if (country && !selectedCountries.includes(country)) {
+                      setSelectedCountries((prev) => [...prev, country]);
+                    }
+                  }}
+                  style={{ padding: 8, fontSize: 16, width: '300px' }}
+                >
+                  <option value="">Select a Country</option>
+                  {countries.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+
+                {selectedCountries.length > 0 && (
+                  <div style={{ marginTop: 12, marginLeft: 24 }}>
+                    <strong>Selected Countries:</strong>
+                    {selectedCountries.map((country) => (
+                      <div
+                        key={country}
+                        style={{ display: 'flex', alignItems: 'center', marginTop: 4 }}
+                      >
+                        <span>{country}</span>
+                        <button
+                          className="button_col"
+                          onClick={() =>
+                            setSelectedCountries((prev) => prev.filter((c) => c !== country))
+                          }
+                          style={{ marginLeft: 8 }}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {selectedValue22 === 'Continents' && (
+              <div style={{ marginTop: 12, marginLeft: 24 }}>
+                <select
+                  value={selectedValue22dropcontinents}
+                  onChange={(e) => setSelectedValue22dropcontinents(e.target.value)}
+                  style={{ padding: 8, fontSize: 16, width: '300px' }}
+                >
+                  <option value="">Select an option</option>
+                  <option value="Europe">Europe</option>
+                  <option value="Asia">Asia</option>
+                  <option value="Africa">Africa</option>
+                  <option value="Oceania">Oceania</option>
+                  <option value="America">America</option>
+                </select>
+              </div>
+            )}
+
+            {selectedValue22 === 'Groups/Unions' && (
+              <div style={{ marginTop: 12, marginLeft: 24 }}>
+                <select
+                  value={selectedValue22dropgroups}
+                  onChange={(e) => setSelectedValue22dropgroups(e.target.value)}
+                  style={{ padding: 8, fontSize: 16, width: '300px' }}
+                >
+                  <option value="">Select a Group/Union</option>
+                  <option value="EU">European Union (EU)</option>
+                  <option value="AU">African Union (AU)</option>
+                  <option value="ASEAN">Association of Southeast Asian Nations (ASEAN)</option>
+                  <option value="NAFTA">North American Free Trade Agreement (NAFTA)</option>
+                  <option value="MERCOSUR">Southern Common Market (MERCOSUR)</option>
+                  <option value="G7">Group of Seven (G7)</option>
+                  <option value="G20">Group of Twenty (G20)</option>
+                  <option value="UN">United Nations (UN)</option>
+                  <option value="OPEC">Organization of Petroleum Exporting Countries (OPEC)</option>
+                  <option value="BRICS">BRICS</option>
+                  <option value="EFTA">European Free Trade Association (EFTA)</option>
+                  <option value="CARICOM">Caribbean Community (CARICOM)</option>
+                </select>
+              </div>
+            )}
           </div>
         )}
 
@@ -939,9 +1032,37 @@ export default function RequestAccessForm() {
     );
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    const username = localStorage.getItem('email');
+    if (!username) {
+      alert('No username in localStorage');
+      return;
+    }
     if (!storedForm.selected) {
       alert('Error: The provider form does not contain selections.');
+      return;
+    }
+
+    try {
+      const r1 = await fetch('http://localhost:5000/submit-requester-form', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username }),
+      });
+
+      if (!r1.ok) {
+        const errText = await r1.text();
+        console.error('submit requester form failed', r1.status, errText);
+        alert('Submit call failed');
+        return;
+      }
+
+      const j1 = await r1.json();
+      console.log('Recorded form submission on-chain:', j1);
+      alert('Form submission recorded');
+    } catch (err) {
+      console.error('Error submitting form:', err);
+      alert('Submission failed');
       return;
     }
 
@@ -954,10 +1075,33 @@ export default function RequestAccessForm() {
       }
     }
 
+    try {
+      const r2 = await fetch('http://localhost:5000/requester-form-match-result', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, isMatch }),
+      });
+
+      if (!r2.ok) {
+        const errText = await r2.text();
+        console.error('requester form matching result failed:', r2.status, errText);
+        alert('Match result call failed');
+        return;
+      }
+
+      const j2 = await r2.json();
+      console.log('Recorded match result on-chain:', j2);
+      alert('Match result recorded');
+    } catch (err) {
+      console.error('Error recording match result:', err);
+      alert('Match result call failed');
+      return;
+    }
+
     if (isMatch) {
-      alert('The selections match the provider’s form.');
+      alert('The selections match the provider form.');
     } else {
-      alert('The selections are different from the provider’s form.');
+      alert('The selections are different from the provider form.');
     }
   };
 

@@ -16,6 +16,7 @@ const { ChromaClient } = require('chromadb');
 const { ethers } = require('ethers');
 const crypto = require('crypto');
 const fs = require('fs');
+const stringify = require('fast-json-stable-stringify');
 
 require('dotenv').config();
 
@@ -94,12 +95,12 @@ const cohere = new CohereClientV2({
 });
 
 const abi = JSON.parse(fs.readFileSync('../FormRegistry.json')).abi;
-// const provider = new ethers.JsonRpcProvider('https://rpc-amoy.polygon.technology'); //polygonamoy testnet
-const provider = new ethers.JsonRpcProvider('http://127.0.0.1:8545'); //localnet
-// const wallet = new ethers.Wallet(process.env.Private_KEY, provider); //for polygonamoy wallet
-const wallet = new ethers.Wallet(process.env.HARDHAT_PREFUNDED_KEY, provider);
-// const contractAddress = process.env.CONTRACT_ADDRESS;
-const contractAddress = process.env.LOCALHOST_CONTRACT_ADDRESS;
+const provider = new ethers.JsonRpcProvider('https://rpc-amoy.polygon.technology'); //polygonamoy testnet
+// const provider = new ethers.JsonRpcProvider('http://127.0.0.1:8545'); //localnet
+const wallet = new ethers.Wallet(process.env.Private_KEY, provider); //for polygonamoy wallet
+// const wallet = new ethers.Wallet(process.env.HARDHAT_PREFUNDED_KEY, provider);
+const contractAddress = process.env.CONTRACT_ADDRESS;
+// const contractAddress = process.env.LOCALHOST_CONTRACT_ADDRESS;
 const contract = new ethers.Contract(contractAddress, abi, wallet);
 
 // Email sending route
@@ -339,6 +340,11 @@ app.post('/upload-dataset', upload.single('file'), async (req, res) => {
   }
 });
 
+function jsonFormHash(obj) {
+  const canonical = stringify(obj);
+  return crypto.createHash('sha256').update(canonical, 'utf8').digest('hex');
+}
+
 app.post('/upload-form', upload.single('file'), async (req, res) => {
   const { email } = req.body;
   const file = req.file;
@@ -356,10 +362,13 @@ app.post('/upload-form', upload.single('file'), async (req, res) => {
   };
 
   try {
+    const jsonContent = JSON.parse(file.buffer.toString('utf8'));
+    const hash = jsonFormHash(jsonContent.selected);
+
     const result = await s3.upload(params).promise();
     console.log(`Uploaded ${file.originalname} to ${keyPath}`);
 
-    const hash = crypto.createHash('sha256').update(keyPath).digest('hex');
+    // const hash = crypto.createHash('sha256').update(keyPath).digest('hex');
     console.log('Recording on-chain');
     const tx = await contract.storeFormHash(hash, keyPath);
     await tx.wait();
@@ -373,6 +382,36 @@ app.post('/upload-form', upload.single('file'), async (req, res) => {
   } catch (err) {
     console.error('Upload or blockchain error:', err);
     res.status(500).send('Failed to upload form or store on-chain');
+  }
+});
+
+app.post('/submit-requester-form', async (req, res) => {
+  const { username } = req.body;
+
+  try {
+    const tx1 = await contract.recordFormSubmission(username);
+    const rcpt1 = await tx1.wait();
+    console.log('Requester form submitted', tx1.hash);
+    res.status(200).json({ message: 'Form submission recorded successfully', txHash: tx1.hash });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to record form submission on-chain' });
+  }
+});
+
+app.post('/requester-form-match-result', async (req, res) => {
+  const { username, isMatch } = req.body;
+
+  try {
+    const tx2 = await contract.recordMatchResult(username, isMatch);
+    const rcpt2 = await tx2.wait();
+    console.log('Match result recorded', tx2.hash);
+    res.status(200).json({
+      message: 'Match result recorded: ${isMatch ? "Match" : "No Match"',
+      txHash: tx2.hash,
+    });
+  } catch (err) {
+    console.error('Failed to record match result on-chain', err);
+    res.status(500).json({ error: 'Failed to record match result on-chain' });
   }
 });
 
