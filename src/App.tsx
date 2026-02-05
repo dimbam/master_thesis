@@ -6,10 +6,21 @@ import Register from './pages/Register';
 import Register_waitpage from './pages/Register_waitpage';
 import LoginSuccess from './pages/Login_success';
 import MainDashboard from './pages/Main_Dashboard';
-import DatasetDashboard from './pages/Dataset_Dashboard';
-import ModelcardDashboard from './pages/ModelcardDashboard';
-import CreateDataset from './pages/duo-blockchain/CreateDataset';
+// import CreateDataset from './pages/duo-blockchain/CreateDataset';
+// import Requesterform from './pages/duo-blockchain/Requester_form';
+// import RequesterSearch from './pages/duo-blockchain/Requester_Dashboard';
+import FilteredForm from './pages/duo-blockchain/FilteredForm';
 import Store from './pages/Store_string';
+import CreateDataCard from './pages/createDataCard';
+import DataCardList from './pages/ViewDataCardList';
+import UploadPage from './pages/UploadFile';
+import CreateForm from './pages/duo-blockchain/CreateForm';
+import RequesterSearchDashbUpd from './pages/duo-blockchain/Requester_Search_Dashb_updated';
+import DataCardViewRequestAccess from './pages/DataCardViewRequestAccess';
+import RequestAccessForm from './pages/duo-blockchain/RequestAccessForm';
+import QueryLLM from './pages/QueryLLM';
+import EditDataCard from './pages/EditDataCardProvider';
+import Generate_summaries from './pages/duo-blockchain/Generate_model_card_summaries';
 import logo from '.././luce.png';
 
 function HomePage() {
@@ -68,10 +79,21 @@ function App() {
         <Route path="/registerwait" element={<Register_waitpage />} />
         <Route path="/loginsuccess" element={<LoginSuccess />} />
         <Route path="/maindashboard" element={<MainDashboard />} />
-        <Route path="/datasetdashboard" element={<DatasetDashboard />} />
-        <Route path="/modelcarddashboard" element={<ModelcardDashboard />} />
-        <Route path="/createDataset" element={<CreateDataset />} />
+        {/* <Route path="/createDataset" element={<CreateDataset />} /> */}
+        {/* <Route path="/requesterform" element={<Requesterform />} /> */}
+        {/* <Route path="/requestersearch" element={<RequesterSearch />} /> */}
+        <Route path="/filteredform" element={<FilteredForm />} />
+        <Route path="/createdatacard" element={<CreateDataCard />} />
+        <Route path="/datacards/:dataset_id" element={<DataCardList />} />
+        <Route path="/uploadfile" element={<UploadPage />} />
+        <Route path="/createform" element={<CreateForm />} />
         <Route path="/store" element={<Store />} />
+        <Route path="/datacardviewrequestaccess" element={<DataCardViewRequestAccess />} />
+        <Route path="/requesterDashbUpd" element={<RequesterSearchDashbUpd />} />
+        <Route path="/requestaccessform" element={<RequestAccessForm />} />
+        <Route path="/queryllm" element={<QueryLLM />} />
+        <Route path="/editdatacard" element={<EditDataCard />} />
+        <Route path="/generateSummaries" element={<Generate_summaries />} />
       </Routes>
     </BrowserRouter>
   );

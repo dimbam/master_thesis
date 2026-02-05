@@ -10,24 +10,34 @@ const MainDashboard: React.FC = () => {
     <div>
       <div className="main_dashboard-header">
         <h1 className="main_dashboard_title">Dashboard</h1>
-        <span onClick={() => navigate('/')} className="dashboard-back-button">
-          Logout
-        </span>
+        <div className="button-row">
+          <button onClick={() => navigate('/maindashboard')} className="dashboard-back-button">
+            Back
+          </button>
+          <span className="splitline">/</span>
+          <button onClick={() => navigate('/')} className="dashboard-back-button">
+            Logout
+          </button>
+        </div>
       </div>
       <div className="dashboard-main-buttons-container">
         <div className="dashboard-dropdown">
-          <span className="dashboard-main-button">Dataset</span>
+          <span className="dashboard-main-button">Provider</span>
           <div className="dropdown-content">
-            <div onClick={() => navigate('/createDataset')}>Create Dataset</div>
-            <div onClick={() => navigate('/viewdataset')}>View Dataset</div>
+            <div onClick={() => navigate('/createform')}>Create Dataset Form</div>
+            <div onClick={() => navigate('/createdatacard')}>Create Data Card</div>
+            <div onClick={() => navigate('/uploadfile')}>Upload File</div>
           </div>
         </div>
 
         <div className="dashboard-dropdown">
-          <span className="dashboard-main-button">Model Card</span>
+          <span className="dashboard-main-button">Requester</span>
           <div className="dropdown-content">
-            <div onClick={() => navigate('/createDataset')}>Create Dataset</div>
-            <div onClick={() => navigate('/viewdataset')}>View Dataset</div>
+            <div onClick={() => navigate('/requesterDashbUpd')}>
+              Open Requester Search Page -- new version from db
+            </div>
+            <div onClick={() => navigate('/queryllm')}>Ask LLM</div>
+            <div onClick={() => navigate('/generateSummaries')}>Model Card Summaries</div>
           </div>
         </div>
       </div>

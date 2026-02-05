@@ -1,0 +1,13 @@
+At the current version, the pages:
+
+http://localhost:5173/requesterform
+http://localhost:5173/requestersearch
+http://localhost:5173/createDataset
+
+are not updated and used
+
+Also the files are not used for the updated versions:
+
+/pages/duo-blockchain/FilteredForm
+/pages/duo-blockchain/Requester_form
+/pages/duo-blockchain/Requester_Dashboard

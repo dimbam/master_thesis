@@ -1,19 +1,43 @@
 import React, { useState } from 'react';
-import { DUO_METADATA } from './DUO_METADATA';
-import '../.././CreateDataset.css';
-import { getEmailsViaGateway } from './../ReturnEmails';
-import { white } from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
-import TooltipInfo from './../TooltipInfo';
+import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { DUO_METADATA } from './DUO_METADATA';
+import TooltipInfo from './../TooltipInfo';
+import '../.././FilteredForm.css';
 
-export default function CreateDataset() {
+const FORM_ROOTS = [
+  'DUO:0000001',
+  'DUO:0000018',
+  'DUO:0000050',
+  'DUO:0000051',
+  'DUO:0000052',
+  'DUO:0000053',
+  'DUO:0000054',
+];
+
+function matchFormSections(selected: Record<string, boolean>) {
+  const matched = new Set<string>();
+  for (const code of Object.keys(selected)) {
+    if (!selected[code]) continue;
+
+    let current = code;
+    while (DUO_METADATA[current]?.subclassOf) {
+      current = DUO_METADATA[current].subclassOf;
+      if (FORM_ROOTS.includes(current)) {
+        matched.add(current);
+        break;
+      }
+    }
+  }
+  return Array.from(matched);
+}
+
+export default function FilteredForm() {
   const navigate = useNavigate();
-  const [name, setName] = useState('');
+  const [matchedRoots, setMatchedRoots] = useState<string[]>([]);
   const [selected, setSelected] = useState<Record<string, boolean>>({});
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({
-    'DUO:0000001': true,
-    'DUO:0000017': false,
-  });
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+
   const [diseaseSearch, setDiseaseSearch] = useState('');
   const [diseaseOptions, setDiseaseOptions] = useState<{ label: string; id: string }[]>([]);
   const [selectedDiseases, setSelectedDiseases] = useState<{ label: string; id: string }[]>([]);
@@ -23,14 +47,12 @@ export default function CreateDataset() {
   const [orgID, setorgID] = useState('');
   const [selectedValue19, setSelectedValue19] = useState('');
   const [selectedValue22, setSelectedValue22] = useState('');
+  const [selectedValue22dropcontinents, setSelectedValue22dropcontinents] = useState('');
+  const [selectedValue22dropgroups, setSelectedValue22dropgroups] = useState('');
+  const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [emails, setEmails] = useState<string[]>([]);
-  const [selectedEmails, setSelectedEmails] = useState<string[]>([]);
   const [selectedValue43, setSelectedValue43] = useState<string[]>([]);
-  const [selectedValue43proof, setSelectedValue43proof] = useState('');
-  const [selectedValue43review, setSelectedValue43review] = useState('');
-  const [selectedValue43conditionstext, setSelectedValue43conditionstext] = useState('');
   const [selectedValue20investigatorName, setSelectedValue20investigatorName] = useState('');
   const [selectedValue20investigatorcontact, setSelectedValue20investigatorcontact] = useState('');
   const [selectedValue20collaborationtype, setSelectedValue20collaborationtype] = useState('');
@@ -40,9 +62,16 @@ export default function CreateDataset() {
   const [selectedValue21contact, setSelectedValue21contact] = useState('');
   const [confirmedExclusion, setConfirmedExclusion] = useState(false);
   const [selectedValue15methodPurpose, setSelectedValue15methodPurpose] = useState<string[]>([]);
-  const [selectedValue15toolType, setSelectedValue15toolType] = useState<string[]>([]);
   const [selectedValue27requirement, setSelectedValue27requirement] = useState(false);
   const [selectedValue27fair, setSelectedValue27fair] = useState(false);
+  const [selectedValue43text, setSelectedValue43text] = useState('');
+  const [clinicalCareDeclaration, setclinicalCareDeclaration] = useState(false);
+  const [institutionName, setinstitutionName] = useState('');
+  const [dataReturnCommitment, setdataReturnCommitment] = useState(false);
+  const [institutionalApproval, setInstitutionalApproval] = useState('');
+  const [blockMetadata, setblockMetadata] = useState('');
+  const [selectedValue18noRestriction, setselectedValue18noRestriction] = useState(false);
+  const [countries, setCountries] = useState<string[]>([]);
 
   const fetchDiseases = async () => {
     if (!diseaseSearch.trim()) {
@@ -86,53 +115,75 @@ export default function CreateDataset() {
     }
   };
 
-  const toggleExpand = (code: string) => setExpanded((e) => ({ ...e, [code]: !e[code] }));
+  const [storedForm, setStoredForm] = useState<any>({});
+
+  const loadRequesterForm = async () => {
+    try {
+      const res = await fetch('http://localhost:5000/form');
+      const fetchedForm = await res.json();
+
+      setStoredForm(fetchedForm);
+
+      const matched = matchFormSections(fetchedForm.selected);
+      setMatchedRoots(matched);
+      const expand = Object.fromEntries(matched.map((r) => [r, true]));
+      setExpanded(expand);
+
+      const emptySelected: Record<string, boolean> = {};
+      Object.keys(fetchedForm.selected).forEach((code) => {
+        emptySelected[code] = false;
+      });
+      setSelected(emptySelected);
+    } catch (err) {
+      console.error('Error loading stored form:', err);
+    }
+  };
+
+  const fetchCountries = async () => {
+    try {
+      const res = await fetch('https://restcountries.com/v3.1/all');
+      const data = await res.json();
+      const names = data.map((country: any) => country.name.common).sort();
+      setCountries(names);
+    } catch (err) {
+      console.error('Error fetching countries:', err);
+    }
+  };
   const toggleSelect = (code: string) => setSelected((s) => ({ ...s, [code]: !s[code] }));
+
+  const toggleExpand = (code: string) => setExpanded((e) => ({ ...e, [code]: !e[code] }));
 
   const childrenOf = (rootCode: string) =>
     Object.entries(DUO_METADATA).filter(([, meta]) => meta.subclassOf === rootCode);
 
-  const save = () => {
-    const codes = Object.entries(selected)
-      .filter(([, v]) => v)
-      .map(([k]) => k);
-
-    const stored = localStorage.getItem('datasets');
-    const arr = stored ? JSON.parse(stored) : [];
-    arr.unshift({
-      name,
-      duoCodes: codes,
-      metadata: selected['DUO:0000007'] ? { diseases: selectedDiseases.map((d) => d.id) } : {},
-      created: new Date().toISOString(),
-    });
-    localStorage.setItem('datasets', JSON.stringify(arr));
-    alert('Dataset saved!');
-  };
-
   const renderNode = (code: string) => {
-    const meta = DUO_METADATA[code]!;
+    const meta = DUO_METADATA[code];
     const children = childrenOf(code);
     const isSelected = selected[code];
     const isExpanded = expanded[code];
 
     return (
-      <div key={code} style={{ marginLeft: 16, marginBottom: 8 }}>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+      <div key={code} style={{ marginLeft: 16 }}>
+        <div className="formlayout" style={{ display: 'flex', alignItems: 'center' }}>
           {children.length > 0 && (
             <span
-              style={{ cursor: 'pointer', fontWeight: 'bold', marginRight: 6 }}
               onClick={() => toggleExpand(code)}
+              style={{ cursor: 'pointer', fontWeight: 'bold', marginRight: 6 }}
             >
               {isExpanded ? '[-]' : '[+]'}
             </span>
           )}
-          <label style={{ display: 'flex', alignItems: 'center' }}>
+          <label>
             {children.length === 0 && (
-              <input type="checkbox" checked={!!isSelected} onChange={() => toggleSelect(code)} />
+              <input
+                className="formlayout"
+                type="checkbox"
+                checked={!!isSelected}
+                onChange={() => toggleSelect(code)}
+              />
             )}
             <span style={{ marginLeft: 8 }}>
-              {meta.label} ({code})
-              <TooltipInfo text={meta.definition} />
+              {meta.label} ({code}) <TooltipInfo text={meta.definition} />
             </span>
           </label>
         </div>
@@ -274,23 +325,18 @@ export default function CreateDataset() {
           </div>
         )}
 
-        {isSelected && code === 'DUO:0000015' && (
+        {isSelected && code === 'DUO:0000018' && (
           <div style={{ marginTop: 12, marginLeft: 48 }}>
-            <strong>Tool Type: </strong>
-            {['AI/ML', 'Statistical', 'Image Processing', 'Bioinformatics'].map((option) => (
-              <label key={option} style={{ display: 'block' }}>
-                <input
-                  type="checkbox"
-                  checked={selectedValue15toolType.includes(option)}
-                  onChange={() => {
-                    setSelectedValue15toolType((prev) =>
-                      prev.includes(option) ? prev.filter((o) => o !== option) : [...prev, option],
-                    );
-                  }}
-                />
-                <span style={{ marginLeft: 8 }}>{option}</span>
-              </label>
-            ))}
+            <label>
+              <input
+                type="checkbox"
+                checked={selectedValue18noRestriction}
+                onChange={() => setselectedValue18noRestriction((prev) => !prev)}
+              />
+              <strong>
+                <span style={{ marginLeft: 10 }}>No Restriction</span>
+              </strong>
+            </label>
           </div>
         )}
 
@@ -301,7 +347,7 @@ export default function CreateDataset() {
               value={selectedValue19}
               onChange={(e) => setSelectedValue19(e.target.value)}
               style={{
-                width: 'calc(50% - 90px)',
+                width: 'calc(40% - 90px)',
                 padding: 8,
                 fontSize: 16,
                 display: 'inline-block',
@@ -318,43 +364,6 @@ export default function CreateDataset() {
             >
               Save
             </button>
-          </div>
-        )}
-
-        {isSelected && code === 'DUO:0000020' && (
-          <div style={{ marginTop: 12, marginLeft: 48 }}>
-            <button
-              className="button_col"
-              onClick={async () => {
-                try {
-                  const result = await getEmailsViaGateway();
-                  setEmails(result);
-                } catch (err) {
-                  console.error('Error loading emails:', err);
-                }
-              }}
-              style={{ marginBottom: 8 }}
-            >
-              Load Emails
-            </button>
-
-            {emails.map((email) => (
-              <label key={email} style={{ display: 'block', marginBottom: 6 }}>
-                <input
-                  type="checkbox"
-                  checked={selectedEmails.includes(email)}
-                  onChange={() => {
-                    setSelectedEmails(
-                      (prev) =>
-                        prev.includes(email)
-                          ? prev.filter((e) => e !== email) // remove
-                          : [...prev, email], // add
-                    );
-                  }}
-                />
-                <span style={{ marginLeft: 8 }}>{email}</span>
-              </label>
-            ))}
           </div>
         )}
 
@@ -502,30 +511,6 @@ export default function CreateDataset() {
           </div>
         )}
 
-        {isSelected && code === 'DUO:0000021' && (
-          <div style={{ marginTop: 6, marginLeft: 48 }}>
-            <fieldset
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                border: 'none',
-                padding: 0,
-                gap: '16px',
-              }}
-            >
-              <span style={{ fontWeight: 'bold' }}>Manual Review Required?</span>
-              <label>
-                <input type="radio" name="manual-review" value="yes" />
-                Yes
-              </label>
-              <label>
-                <input type="radio" name="manual-review" value="no" />
-                No
-              </label>
-            </fieldset>
-          </div>
-        )}
-
         {isSelected && code === 'DUO:0000022' && (
           <div style={{ marginTop: 12, marginLeft: 24 }}>
             <select
@@ -578,18 +563,110 @@ export default function CreateDataset() {
           </div>
         )}
 
-        {isSelected && code === 'DUO:0000026' && (
+        {isSelected && code === 'DUO:0000022' && (
           <div style={{ marginTop: 12, marginLeft: 24 }}>
             <select
               value={selectedValue22}
-              onChange={(e) => setSelectedValue22(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                setSelectedValue22(val);
+                if (val === 'Countries') {
+                  fetchCountries();
+                }
+              }}
               style={{ padding: 8, fontSize: 16, width: '300px' }}
             >
               <option value="">Select an option</option>
-              <option value="europe">Europe</option>
-              <option value="asia">Asia</option>
-              <option value="africa">Africa</option>
+              <option value="Countries">Countries</option>
+              <option value="Continents">Continents</option>
+              <option value="Groups/Unions">Groups/Unions</option>
             </select>
+
+            {selectedValue22 === 'Countries' && (
+              <div style={{ marginTop: 12, marginLeft: 24 }}>
+                <select
+                  value=""
+                  onChange={(e) => {
+                    const country = e.target.value;
+                    if (country && !selectedCountries.includes(country)) {
+                      setSelectedCountries((prev) => [...prev, country]);
+                    }
+                  }}
+                  style={{ padding: 8, fontSize: 16, width: '300px' }}
+                >
+                  <option value="">Select a Country</option>
+                  {countries.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+
+                {selectedCountries.length > 0 && (
+                  <div style={{ marginTop: 12, marginLeft: 24 }}>
+                    <strong>Selected Countries:</strong>
+                    {selectedCountries.map((country) => (
+                      <div
+                        key={country}
+                        style={{ display: 'flex', alignItems: 'center', marginTop: 4 }}
+                      >
+                        <span>{country}</span>
+                        <button
+                          className="button_col"
+                          onClick={() =>
+                            setSelectedCountries((prev) => prev.filter((c) => c !== country))
+                          }
+                          style={{ marginLeft: 8 }}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {selectedValue22 === 'Continents' && (
+              <div style={{ marginTop: 12, marginLeft: 24 }}>
+                <select
+                  value={selectedValue22dropcontinents}
+                  onChange={(e) => setSelectedValue22dropcontinents(e.target.value)}
+                  style={{ padding: 8, fontSize: 16, width: '300px' }}
+                >
+                  <option value="">Select an option</option>
+                  <option value="Europe">Europe</option>
+                  <option value="Asia">Asia</option>
+                  <option value="Africa">Africa</option>
+                  <option value="Oceania">Oceania</option>
+                  <option value="America">America</option>
+                </select>
+              </div>
+            )}
+
+            {selectedValue22 === 'Groups/Unions' && (
+              <div style={{ marginTop: 12, marginLeft: 24 }}>
+                <select
+                  value={selectedValue22dropgroups}
+                  onChange={(e) => setSelectedValue22dropgroups(e.target.value)}
+                  style={{ padding: 8, fontSize: 16, width: '300px' }}
+                >
+                  <option value="">Select a Group/Union</option>
+                  <option value="EU">European Union (EU)</option>
+                  <option value="AU">African Union (AU)</option>
+                  <option value="ASEAN">Association of Southeast Asian Nations (ASEAN)</option>
+                  <option value="NAFTA">North American Free Trade Agreement (NAFTA)</option>
+                  <option value="MERCOSUR">Southern Common Market (MERCOSUR)</option>
+                  <option value="G7">Group of Seven (G7)</option>
+                  <option value="G20">Group of Twenty (G20)</option>
+                  <option value="UN">United Nations (UN)</option>
+                  <option value="OPEC">Organization of Petroleum Exporting Countries (OPEC)</option>
+                  <option value="BRICS">BRICS</option>
+                  <option value="EFTA">European Free Trade Association (EFTA)</option>
+                  <option value="CARICOM">Caribbean Community (CARICOM)</option>
+                </select>
+              </div>
+            )}
           </div>
         )}
 
@@ -625,34 +702,85 @@ export default function CreateDataset() {
           </div>
         )}
 
-        {isSelected && code === 'DUO:0000043' && (
+        {isSelected && code === 'DUO:0000028' && (
+          <div style={{ marginTop: 12, marginLeft: 24 }}>
+            <span>Institution Name: </span>
+            <input
+              placeholder="Type the name of the institution..."
+              value={institutionName}
+              onChange={(e) => setinstitutionName(e.target.value)}
+              style={{
+                width: 'calc(50% - 90px)',
+                padding: 8,
+                fontSize: 16,
+                display: 'inline-block',
+                marginRight: 8,
+              }}
+            />
+          </div>
+        )}
+
+        {isSelected && code === 'DUO:0000028' && (
+          <div style={{ marginTop: 6, marginLeft: 48 }}>
+            <fieldset
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                border: 'none',
+                padding: 0,
+                gap: '16px',
+              }}
+            >
+              <span style={{ fontWeight: 'bold' }}>Require Institutional Approval? </span>
+              <label>
+                <input
+                  type="radio"
+                  name="institutional-approval"
+                  value="yes"
+                  checked={institutionalApproval === 'yes'}
+                  onChange={(e) => setInstitutionalApproval(e.target.value)}
+                />
+                Yes
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="institutional-approval"
+                  value="no"
+                  checked={institutionalApproval === 'no'}
+                  onChange={(e) => setInstitutionalApproval(e.target.value)}
+                />
+                No
+              </label>
+            </fieldset>
+          </div>
+        )}
+
+        {isSelected && code === 'DUO:0000029' && (
           <div style={{ marginTop: 12, marginLeft: 48 }}>
-            <strong>Allow Access To: </strong>
-            {['Physician ', 'Nurse Practitioner', 'Radiologist', 'Healthcare Institution'].map(
-              (option) => (
-                <label key={option} style={{ display: 'block' }}>
-                  <input
-                    type="checkbox"
-                    checked={selectedValue43.includes(option)}
-                    onChange={() => {
-                      setSelectedValue43((prev) =>
-                        prev.includes(option)
-                          ? prev.filter((o) => o !== option)
-                          : [...prev, option],
-                      );
-                    }}
-                  />
-                  <span style={{ marginLeft: 8 }}>{option}</span>
-                </label>
-              ),
-            )}
+            <label>
+              <input
+                type="checkbox"
+                checked={dataReturnCommitment}
+                onChange={() => setdataReturnCommitment((prev) => !prev)}
+              />
+              <strong>
+                <span style={{ marginLeft: 10 }}>Data Return Commitment</span>
+              </strong>
+            </label>
           </div>
         )}
 
         {isSelected && code === 'DUO:0000043' && (
-          <div style={{ marginTop: 6, marginLeft: 48 }}>
-            <strong>Required Credential Type</strong>
-            {['Medical License', 'Verifiable Credential', 'Hospital Staff ID'].map((option) => (
+          <div style={{ marginTop: 12, marginLeft: 48 }}>
+            <strong>Allow Access To: </strong>
+            {[
+              'Physician ',
+              'Nurse Practitioner',
+              'Radiologist',
+              'Healthcare Institution',
+              'Other',
+            ].map((option) => (
               <label key={option} style={{ display: 'block' }}>
                 <input
                   type="checkbox"
@@ -666,71 +794,141 @@ export default function CreateDataset() {
                 <span style={{ marginLeft: 8 }}>{option}</span>
               </label>
             ))}
+            {selectedValue43.includes('Other') && (
+              <input
+                type="text"
+                placeholder="Please specify"
+                value={selectedValue43text}
+                onChange={(e) => setSelectedValue43text(e.target.value)}
+                style={{
+                  marginTop: 8,
+                  padding: 6,
+                  fontSize: 14,
+                  width: '100%',
+                  maxWidth: 400,
+                  boxSizing: 'border-box',
+                }}
+              />
+            )}
           </div>
         )}
 
         {isSelected && code === 'DUO:0000043' && (
-          <div style={{ marginTop: 6, marginLeft: 48 }}>
-            {'Proof Submission Method'}
-            <select
-              value={selectedValue43proof}
-              onChange={(e) => setSelectedValue43proof(e.target.value)}
-              style={{ padding: 8, fontSize: 16, width: '200px' }}
-            >
-              <option value="Document Upload">Document Upload</option>
-              <option value="Institutional Email">Institutional Email</option>
-            </select>
-          </div>
-        )}
-
-        {isSelected && code === 'DUO:0000043' && (
-          <div style={{ marginTop: 6, marginLeft: 48 }}>
-            {' Manual Review Needed? '}
+          <div style={{ marginTop: 12, marginLeft: 48 }}>
             <label>
               <input
-                type="radio"
-                name="manual_review"
-                value="yes"
-                checked={selectedValue43review === 'yes'}
-                onChange={(e) => setSelectedValue43review(e.target.value)}
-                style={{ marginLeft: 4, marginRight: 2 }}
+                type="checkbox"
+                checked={clinicalCareDeclaration}
+                onChange={() => setclinicalCareDeclaration((prev) => !prev)}
               />
-              Yes
+              <strong>
+                <span style={{ marginLeft: 10 }}>
+                  Clinical Care Use Declaration (Including Home-Based Care)
+                </span>
+              </strong>
             </label>
-            <label style={{ marginLeft: 16 }}>
-              <input
-                type="radio"
-                name="manual_review"
-                value="no"
-                checked={selectedValue43review === 'no'}
-                onChange={(e) => setSelectedValue43review(e.target.value)}
-                style={{ marginRight: 2 }}
-              />
-              No
-            </label>
+            {clinicalCareDeclaration && (
+              <div className="clinical_care_form" style={{ marginTop: 12, marginLeft: 48 }}>
+                <strong>By selecting Clinical Care Use, the requester affirms that:</strong>
+
+                <h3 style={{ marginTop: 16, fontWeight: 'bold', fontSize: '1rem' }}>
+                  The data will be used solely for the purpose of clinical care and decision-making.
+                </h3>
+                <h3 style={{ marginTop: 16 }}>
+                  <strong>1. Permitted Settings</strong>
+                </h3>
+                <p style={{ marginLeft: 10 }}>
+                  Clinical care is defined to include, but is not limited to:
+                  <ul style={{ marginLeft: 10 }}>
+                    <li>- In-hospital care</li>
+                    <li>- Outpatient clinic visits</li>
+                    <li>- Licensed home-based care</li>
+                    <li>- Telemedicine consultations</li>
+                  </ul>
+                </p>
+
+                <h3>
+                  <strong>2. Care at Home (or Remote)</strong>
+                </h3>
+                <p style={{ marginLeft: 10 }}>
+                  If clinical care is provided at the patient’s home or through remote platforms:
+                  <ul style={{ marginLeft: 10 }}>
+                    <li>- The requester must be licensed and authorized to deliver such care;</li>
+                    <li>
+                      - The data must be used only for supporting care of an identifiable patient or
+                      case;
+                    </li>
+                    <li>
+                      - The requester must provide a brief description of the care setting and
+                      clinical context.
+                    </li>
+                  </ul>
+                </p>
+
+                <h3 style={{ marginTop: 16 }}>
+                  <strong>I, hereby certify that:</strong>
+                </h3>
+                <p>
+                  <ul style={{ marginLeft: 10 }}>
+                    <li>
+                      - I am a licensed healthcare provider or authorized clinical staff member;
+                    </li>
+                    <li>
+                      - The data requested will be used exclusively for a clinical care episode;
+                    </li>
+                    <li>
+                      - If the care is provided at home or remotely, I am authorized to deliver such
+                      care under applicable law;
+                    </li>
+                    <li>
+                      - I will not use the data for research, teaching, commercial, or model
+                      training purposes.
+                    </li>
+                  </ul>
+                </p>
+              </div>
+            )}
           </div>
         )}
 
-        {isSelected && code === 'DUO:0000043' && (
+        {isSelected && code === 'DUO:0000044' && (
           <div style={{ marginTop: 6, marginLeft: 48 }}>
-            {'Additional Conditions (Optional):'}
-            <input
-              placeholder="Must be actively practicing in a licensed facility "
-              value={selectedValue43conditionstext}
-              onChange={(e) => setSelectedValue43conditionstext(e.target.value)}
+            <fieldset
               style={{
-                width: 'calc(70% - 90px)',
-                padding: 8,
-                fontSize: 16,
-                display: 'inline-block',
-                marginRight: 8,
+                display: 'flex',
+                alignItems: 'center',
+                border: 'none',
+                padding: 0,
+                gap: '16px',
               }}
-            />
+            >
+              <span style={{ fontWeight: 'bold' }}>Block Population Metadata ? </span>
+              <label>
+                <input
+                  type="radio"
+                  name="block-metadata"
+                  value="yes"
+                  checked={blockMetadata === 'yes'}
+                  onChange={(e) => setblockMetadata(e.target.value)}
+                />
+                Yes
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="block-metadata"
+                  value="no"
+                  checked={blockMetadata === 'no'}
+                  onChange={(e) => setblockMetadata(e.target.value)}
+                />
+                No
+              </label>
+            </fieldset>
           </div>
         )}
 
         {children.length > 0 && isExpanded && (
-          <div style={{ marginLeft: 16 }}>
+          <div style={{ marginLeft: 24 }}>
             {children.map(([childCode]) => renderNode(childCode))}
           </div>
         )}
@@ -738,37 +936,67 @@ export default function CreateDataset() {
     );
   };
 
+  const handleSubmit = () => {
+    if (!storedForm.selected) {
+      alert('Error: The provider form does not contain selections.');
+      return;
+    }
+
+    let isMatch = true;
+
+    for (const key in selected) {
+      if (selected[key] !== storedForm.selected[key]) {
+        isMatch = false;
+        break;
+      }
+    }
+
+    if (isMatch) {
+      alert('The selections match the provider’s form.');
+    } else {
+      alert('The selections are different from the provider’s form.');
+    }
+  };
+
   return (
-    <div className="create-dataset-page">
-      <div className="form" style={{ padding: 16 }}>
-        <h2 className="title-container">Create Dataset</h2>
-        <div style={{ marginBottom: 12 }}>
-          <input
-            placeholder="Dataset Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            style={{ width: '30%', padding: 8, fontSize: 16 }}
-          />
+    <div>
+      <div className="main_dashboard-header">
+        <h1 className="main_dashboard_title">Access Request</h1>
+        <div className="filter-buttons-container">
+          {/* <button
+              onClick={() => navigate('/requesterform')}
+              className="filter-button dataset-button"
+            >
+              Dataset
+            </button>
+            <button
+              onClick={() => navigate('/requesterform')}
+              className="filter-button modelcard-button"
+            >
+              Model Card
+            </button> */}
         </div>
-
-        <h3>Select DUO Permissions</h3>
-        <div>{['DUO:0000001', 'DUO:0000017'].map((root) => renderNode(root))}</div>
-
-        <button
-          className="button_col"
-          onClick={save}
-          disabled={
-            !name ||
-            Object.values(selected).every((v) => !v) ||
-            (selected['DUO:0000007'] && selectedDiseases.length === 0)
-          }
-          style={{ marginTop: 24, padding: 12, fontSize: 16 }}
-        >
-          Create Dataset
-        </button>
-        <span onClick={() => navigate('/')} className="back-button">
-          Logout
-        </span>
+        <div className="button-row">
+          <button onClick={() => navigate('/maindashboard')} className="dashboard-back-button">
+            Back
+          </button>
+          <span className="splitline">/</span>
+          <button onClick={() => navigate('/')} className="dashboard-back-button">
+            Logout
+          </button>
+        </div>
+      </div>
+      <div className="form-wrapper">
+        <div className="formlayout" style={{ padding: 24 }}>
+          <h2 className="form_title">Filtered DUO Form</h2>
+          <button className="load_button" onClick={loadRequesterForm} style={{ marginBottom: 16 }}>
+            Load Requester Form
+          </button>
+          {matchedRoots.map((rootCode: string) => renderNode(rootCode))}
+          <button className="load_button" onClick={handleSubmit}>
+            Submit
+          </button>
+        </div>
       </div>
     </div>
   );
